@@ -9,14 +9,17 @@ $states = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => 
 "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
 "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming");
 
-if(file_exists("init.ini"))
+$path = "init.ini";
+
+if(file_exists($path))
 	{
-	$data = explode(", ",file_get_contents("init.ini"));
+	$data = parse_ini_file($path);
+	$keys = array_keys($data);
 	$step = 3;
 	
-	$abb = $data[1];
-	$libraryName = $data[2];
-	$wskey = $data[3];
+	$abb = $data[$keys[0]];
+	$libraryName = $data[$keys[1]];
+	$wskey = $data[$keys[2]];
 	}
 else
 	{
@@ -236,7 +239,25 @@ if($step == 1)
 	</html>
 	
 	<?php
-	file_put_contents("init.ini", "This file holds the institution name WorldCat API Key and state, $state, $libraryName, $wskey");
+	$iniData = [];
+	$iniData["settings"] =
+		[
+		"state" => $state,
+		"institution" => $libraryName,
+		"wskey" => $wskey
+		];
+		
+	$file = fopen($path, 'w');
+	foreach ($iniData as $key => $value) {
+        $dataToWrite[] = "[$key]";
+        foreach ($value as $k => $v) {
+            $escaped_value = addcslashes($v, '"');
+            $dataToWrite[] = "$k = \"$escaped_value\"";
+        }
+        $dataToWrite[] = "";
+    }
+    fwrite($file, implode("\n",$dataToWrite));
+    fclose($file);
 	}
  
  elseif($step == 3)
