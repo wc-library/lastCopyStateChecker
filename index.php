@@ -113,7 +113,7 @@ else
 	<style>
    body {background: linear-gradient(to right,#A3B58E 0%,#C6D6AE 50%,#A3B58E 100%);}
     h1 { text-align: center; }
-    #container {margin: auto; background: url("Assets/bg-stripes.png") repeat #fff;  border: 1px #AAF solid; overflow: hidden; box-shadow: 2px 2px 8px #888; border-radius: 8px;}
+    #striped_Box {padding: 25px; margin: auto; background: url("Assets/bg-stripes.png") repeat #fff;  border: 1px #AAF solid; overflow: hidden; box-shadow: 2px 2px 8px #888; border-radius: 8px;}
     #content { position: relative; padding: 25px; }
     #input { position: relative; }
     #loadingIcon { position: absolute; height: 100%; left: 0; right: 0; margin: auto; top: 0; }
@@ -171,52 +171,41 @@ if($step == 1)
 	{?>
 
 <body>
-<div id='container' style = "width: 550px; padding: 25px;">
-<div id = "row">
-<div>
-<form action = "index.php" method = "post">
-	<table>
-		<tr>
-			<td>
-			<label>Please Enter State Name:</label>
-			<?php 
-			print "<select name = \"state\" class=\"form-control\">";
+<div class = "container">
+	<div class = "row">
+		<div class="col-sm-6 col-sm-offset-3">
+			<form action = "index.php" method = "post"  role="form" id = 'striped_Box'>
+				<div class = "col-sm-12">
+					<label>Please Enter State Name:</label>
+					<?php 
+					print "<select name = \"state\" class=\"form-control\">";
 			
-			foreach(array_keys($states) as $state)
-				{
-				print "<option value = \"$state\" >";
-				print $states[$state];
-				print "</option>";
-				}
-			print "</select>";
-			?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>Please Enter the Institution's Name:</label>
-				<input type = "text" style = "width: 500px;" name = "institution" class = "form-control">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>Please Enter the Institution's WorldCat API Key:</label>
-				<input type = "text" style = "width: 500px;" name = "wskey" class = "form-control">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<br>
-				<input type = "hidden" value = '2' name = "step">
-				<input type = "submit" value = "Submit" class = "btn btn-default">
-			</td>
-		</tr>
-	</table>
-	</form>
+					foreach(array_keys($states) as $state)
+						{
+						print "<option value = \"$state\" >";
+						print $states[$state];
+						print "</option>";
+						}
+					print "</select>";
+					?>
+				</div>
+				<div class = "col-sm-12">
+					<label>Please Enter the Institution's Name:</label>
+					<input type = "text" name = "institution" class = "form-control">
+				</div>
+				<div class = "col-sm-12">
+					<label>Please Enter the Institution's WorldCat API Key:</label>
+					<input type = "text" name = "wskey" class = "form-control">
+				</div>
+				<div class = "col-sm-12">
+					<br/>
+					<input type = "hidden" value = '2' name = "step">
+					<input type = "submit" value = "Submit" class = "btn btn-default">
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
-</div>
-</div>
-
 
 </body>
 </html>
@@ -229,14 +218,18 @@ if($step == 1)
 	$wskey = $_POST['wskey'];
 	?>
 	<body>
-		<div id = "container" style = "width: 550px; text-align: center; padding: 20px;">
-		<form action = "index.php" method = "post">
-			<h1>Your Library's Information Has Been Saved</h1>
-			<input type = "submit" value = "Continue" class = "btn btn-default">
-		</form>
+		<div class = "container">
+			<div class = "row">
+				<div class="col-sm-6 col-sm-offset-3">
+					<form action = "index.php" method = "post" id = "striped_Box" style = "text-align: center;">
+						<h1>Your Library's Information Has Been Saved</h1>
+						<input type = "submit" value = "Continue" class = "btn btn-default">
+					</form>
+				</div>
+			</div>
 		</div>
 	</body>
-	</html>
+</html>
 	
 	<?php
 	$iniData = [];
@@ -261,28 +254,35 @@ if($step == 1)
 	}
  
  elseif($step == 3)
-	{
-?>
+	{ ?>
+	
 	<body>
-		<h1>Last Copy in <?php print $states[$abb];?> Checker</h1>
-		<div id='container' style = "width: 500px;">
-		<div id='content'>
-		<div id='input'>
-			<label for='upload'>Upload Batch OCLC File:</label>
-			<input type='file' id='upload' onchange="checkFile((this.files[0]));">
-			<img src='Assets/ajax-loader.gif' id='loadingIcon' class='dNone'>
-		
-		</div>
-			<div id='output' class='dNone'>
-			<h2>OCLC Number Responses</h2>
-			<button type='button' id='downloadSimple' onclick='downloadSimple()' class = "btn btn-default">Download Simple</button>
-			<button type='button' id='downloadDetailed' onclick='downloadDetailed()' class = "btn btn-default">Download Detailed</button>
-			<div class='dNone'>
-			<h2>Entries Listed as 'At <?php print $libraryName; ?>'</h2>
-			<ol id='atLibrary'></ol>
+		<div class = "container">
+			<div class = "row">
+				<div class = "col-sm-6 col-sm-offset-3">
+				<div>
+					<h1>Last Copy in <?php print $states[$abb];?> Checker</h1>
+				</div>
+				<div id = "striped_Box">
+					<div id = 'input' class = "col-sm-12">
+						<label for='upload'>Upload Batch OCLC File:</label>
+						<input type='file' id='upload' onchange="checkFile((this.files[0]));">
+						<img src='Assets/ajax-loader.gif' id='loadingIcon' class='dNone'>
+					</div>
+					<div id='output' class='dNone' style = "text-align: center;">
+						<div class = "col-sm-12">
+							<h2>OCLC Number Responses</h2>
+							<button type='button' id='downloadSimple' onclick='downloadSimple()' class = "btn btn-default">Download Simple</button>
+							<button type='button' id='downloadDetailed' onclick='downloadDetailed()' class = "btn btn-default">Download Detailed</button>
+						</div>
+						<div class='dNone'>
+							<h2>Entries Listed as 'At <?php print $libraryName; ?>'</h2>
+							<ol id='atLibrary'></ol>
+						</div>
+					</div>
+				</div>	
+				</div>
 			</div>
-			</div>
-		</div>
 		</div>
 	</body>
 </html>
