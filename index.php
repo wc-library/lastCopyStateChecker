@@ -7,7 +7,7 @@ $states = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => 
 "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina",
 "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island",
 "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
-"VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming");
+"VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming", "State" => "State");
 
 $path = "init.ini";
 
@@ -24,6 +24,7 @@ if(file_exists($path))
 else
 	{
 	$step = isset($_POST['step']) ? $_POST['step'] : 1;
+	$abb = "State";
 	}
 	if (isset($_FILES['file-input'])){
     if ($handle = fopen($_FILES['file-input']['tmp_name'], 'r')) {
@@ -104,7 +105,7 @@ else
 <!DOCTYPE html>
 <html lang = "en">
 <head>
-	<title>Last Copy State Checker</title>
+	<title>Last Copy in <?php print $states[$abb]; ?> Checker</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">	
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -249,7 +250,7 @@ if($step == 1)
         }
         $dataToWrite[] = "";
     }
-    fwrite($file, implode("\n",$dataToWrite));
+    fwrite($file, implode("\r\n",$dataToWrite));
     fclose($file);
 	}
  
