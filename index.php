@@ -127,24 +127,16 @@ function flag($oclc,$stateabb,$worldcatkey)
     <html lang = "en">
 <?php // TODO: make templates/header and use instead for clarity ?>
     <head>
-        <title>Last Copy in <?php print $states[$abb]; ?> Checker</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+        <title>Last Copy in <?php print $states[$abb]; ?> Checker</title>
+
+        <?php // stylesheet includes Bootstrap + Bootswatch theme ?>
+        <link rel="stylesheet" href="res/css/index/index.css">
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-        <style>
-            <?php // TODO: extract to stylesheet ?>
-            body {background: linear-gradient(to right,#A3B58E 0%,#C6D6AE 50%,#A3B58E 100%);}
-            h1 { text-align: center; }
-            #striped_Box {padding: 25px; margin: auto; background: url("Assets/bg-stripes.png") repeat #fff;  border: 1px #AAF solid; overflow: hidden; box-shadow: 2px 2px 8px #888; border-radius: 8px;}
-            #content { position: relative; padding: 25px; }
-            #input { position: relative; }
-            #loadingIcon { position: absolute; height: 100%; left: 0; right: 0; margin: auto; top: 0; }
-            .dNone { display: none; }
-            #output { position: relative; }
-            #atLibrary { background: #fcfcfc; border: 2px black solid; border-radius: 10px; padding-top: 10px; padding-bottom: 10px; }
-        </style>
         <script>
             <?php // TODO: extract to script file ?>
             var simpleOutput;
@@ -260,7 +252,7 @@ switch($step)
             <div class = "row">
                 <div class="col-sm-6 col-sm-offset-3">
                     <form action = "index.php" method = "post" id = "striped_Box" style = "text-align: center;">
-                        <h1>Your Library's Information Has Been Saved</h1>
+                        <h1 class="text-center">Your Library's Information Has Been Saved</h1>
                         <input type = "submit" value = "Continue" class = "btn btn-default">
                     </form>
                 </div>
@@ -300,7 +292,7 @@ switch($step)
             <div class = "row">
                 <div class = "col-sm-6 col-sm-offset-3">
                     <div>
-                        <h1>Last Copy in <?php print $states[$abb];?> Checker</h1>
+                        <h1 class="text-center">Last Copy in <?php print $states[$abb];?> Checker</h1>
                     </div>
                     <div id = "striped_Box">
                         <div id = 'input' class = "col-sm-12">

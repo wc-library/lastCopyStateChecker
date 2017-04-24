@@ -1,0 +1,11 @@
+/* The various partials and SCSS sheets used across all pages are imported here */
+
+// Bootstrap/Bootswatch components
+// Note: import order varies for different themes
+@import "bootswatch/variables";
+@import "bootstrap";
+@import "bootswatch/bootswatch";
+
+// Mixins
+
+// Components
