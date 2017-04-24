@@ -1,6 +1,8 @@
 <?php
+// Array mapping state abbreviations to their full names
+// TODO: make $states a constant (it's never written to)
 $states = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas",
-"CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida", 
+"CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida",
 "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa",
 "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts",
 "MI" => "Michigan", "MN" => "Minnesota", "MS" => "Mississippi", "MO" => "Missouri", "MT" => "Montana", "NE" => "Nebraska",
@@ -9,6 +11,7 @@ $states = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => 
 "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
 "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming", "State" => "State");
 
+// TODO: move to config/, add .htaccess to ensure API key isn't publically accessible, use .php file instead so can't leak to browser?
 $path = "init.ini";
 
 	if(file_exists($path))
@@ -119,6 +122,7 @@ $path = "init.ini";
 
 <!DOCTYPE html>
 <html lang = "en">
+    <?php // TODO: make templates/header and use instead for clarity ?>
 <head>
 	<title>Last Copy in <?php print $states[$abb]; ?> Checker</title>
 	<meta charset="UTF-8">
@@ -127,6 +131,7 @@ $path = "init.ini";
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<style>
+        <?php // TODO: extract to stylesheet ?>
 	body {background: linear-gradient(to right,#A3B58E 0%,#C6D6AE 50%,#A3B58E 100%);}
 	h1 { text-align: center; }
 	#striped_Box {padding: 25px; margin: auto; background: url("Assets/bg-stripes.png") repeat #fff;  border: 1px #AAF solid; overflow: hidden; box-shadow: 2px 2px 8px #888; border-radius: 8px;}
@@ -138,12 +143,13 @@ $path = "init.ini";
 	#atLibrary { background: #fcfcfc; border: 2px black solid; border-radius: 10px; padding-top: 10px; padding-bottom: 10px; }
 	</style>
 	<script>
+        <?php // TODO: extract to script file ?>
     var simpleOutput;
     var detailedOutput;
 
     function checkFile(file) 
 		{
-		var xmlhttp = new XMLHttpRequest();
+            <?php // TODO: use jQuery Ajax for clarity ?>
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function()
 			{
@@ -193,6 +199,7 @@ $path = "init.ini";
 </head>
 	
 <?php
+// TODO: extract <body> markup in each case to a template file
 switch($step)
 	{
 	case 1:?>
