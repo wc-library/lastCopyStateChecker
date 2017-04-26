@@ -1,7 +1,6 @@
 <?php
 // Array mapping state abbreviations to their full names
-// TODO: make $states a constant (it's never written to)
-$states = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas",
+define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas",
     "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida",
     "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa",
     "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts",
@@ -9,7 +8,7 @@ $states = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => 
     "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina",
     "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island",
     "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
-    "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming", "State" => "State");
+    "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming", "State" => "State"));
 
 // TODO: move to config/, add .htaccess to ensure API key isn't publically accessible, use .php file instead so can't leak to browser?
 // TODO: make this a constant? (it's never written to)
@@ -125,21 +124,7 @@ function flag($oclc,$stateabb,$worldcatkey)
 
     <!DOCTYPE html>
     <html lang = "en">
-<?php // TODO: make templates/header and use instead for clarity ?>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Last Copy in <?php print $states[$abb]; ?> Checker</title>
-
-        <?php // stylesheet includes Bootstrap + Bootswatch theme ?>
-        <link rel="stylesheet" href="res/css/index/index.css">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-        <script src="res/js/index.js"></script>
-    </head>
+    <?php include_once 'templates/header.php' ?>
 
 <?php
 // TODO: extract <body> markup in each case to a template file
@@ -157,10 +142,10 @@ switch($step)
                             <?php
                             print "<select name = \"state\" class=\"form-control\">";
 
-                            foreach(array_keys($states) as $state)
+                            foreach(array_keys(STATES) as $state)
                             {
                                 print "<option value = \"$state\" >";
-                                print $states[$state];
+                                print STATES[$state];
                                 print "</option>";
                             }
                             print "</select>";
@@ -240,7 +225,7 @@ switch($step)
             <div class = "row">
                 <div class = "col-sm-6 col-sm-offset-3">
                     <div>
-                        <h1 class="text-center">Last Copy in <?php print $states[$abb];?> Checker</h1>
+                        <h1 class="text-center">Last Copy in <?php print STATES[$abb];?> Checker</h1>
                     </div>
                     <div id = "striped_Box">
                         <div id = 'input' class = "col-sm-12">
