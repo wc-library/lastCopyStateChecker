@@ -142,31 +142,18 @@ function flag($oclc,$stateabb,$worldcatkey)
 // TODO: extract <body> markup in each case to a template file
 switch($step)
 {
-    // Step 1: Create config file
+    // Step 1: Config file hasn't been created
     case 1:
         include 'templates/index/step1.php';
         break;
-    // Step 2: After config file has been created
-    // TODO: use Ajax instead?
+    // Step 2: After config form has been submitted
+    // TODO: use Ajax instead. Bugs can arise if we reach case 2 without setting variables (e.g. fill out form in case 1, delete ini file, refresh page on step 2)
     case 2:
+        // Get POST data and create config file
         $state = $_POST['state'];
         $libraryName = $_POST['institution'];
         $wskey = $_POST['wskey'];
-        ?>
-        <body>
-        <div class = "container">
-            <div class = "row">
-                <div class="col-sm-6 col-sm-offset-3">
-                    <form action = "index.php" method = "post" id = "striped_Box" style = "text-align: center;">
-                        <h1 class="text-center">Your Library's Information Has Been Saved</h1>
-                        <input type = "submit" value = "Continue" class = "btn btn-default">
-                    </form>
-                </div>
-            </div>
-        </div>
-        </body>
 
-        <?php
         $iniData = [];
         $iniData["settings"] =
             [
@@ -187,8 +174,9 @@ switch($step)
         fwrite($file, implode("\r\n",$dataToWrite));
         fclose($file);
 
+        include 'templates/index/step2.php';
         break;
-
+    // Step 3: After config file has been created
     case 3:
         ?>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML for configuration step
+ * HTML for configuration step 1
  */
 // TODO: move to different directory? Not technically a template
 ?>
@@ -13,6 +13,7 @@
     </div>
 
     <div class="well">
+        <?php // TODO: use Ajax, issues can arise setting action to self ?>
         <form class="form-vertical" action="index.php" method="post"  role="form" id="config-form">
             <div class="form-group">
                 <label for="state-select">State:</label>
