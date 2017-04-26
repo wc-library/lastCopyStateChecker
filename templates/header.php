@@ -3,12 +3,13 @@
  * Template file for page headers
  */
 // TODO: make generic
+
 ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Last Copy in <?php echo STATES[$abb]; ?> Checker</title>
+    <title><?php echo $title; ?></title>
 
     <?php // stylesheet includes Bootstrap + Bootswatch theme ?>
     <link rel="stylesheet" href="res/css/index/index.css">

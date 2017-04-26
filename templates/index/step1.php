@@ -7,40 +7,40 @@
 
 <body>
 <div class="container">
-    <div class="row">
-        <div class="col-sm-6 col-sm-offset-3">
-            <?php // TODO: form fields aren't required, can just click submit ?>
-            <form action="index.php" method="post"  role="form" id="striped_Box">
-                <div class="col-sm-12">
-                    <label>Please Enter State Name:</label>
-                    <?php
-                    echo "<select name = \"state\" class=\"form-control\">";
 
-                    foreach(array_keys(STATES) as $state)
-                    {
-                        echo "<option value = \"$state\" >";
-                        echo STATES[$state];
-                        echo "</option>";
-                    }
-                    echo "</select>";
-                    ?>
-                </div>
-                <div class="col-sm-12">
-                    <label>Please Enter the Institution's Name:</label>
-                    <input type="text" name="institution" class="form-control">
-                </div>
-                <div class="col-sm-12">
-                    <label>Please Enter the Institution's WorldCat API Key:</label>
-                    <input type="text" name="wskey" class="form-control">
-                </div>
-                <div class="col-sm-12">
-                    <br/>
-                    <input type="hidden" value="2" name="step">
-                    <input type="submit" value="Submit" class="btn btn-default">
-                </div>
-            </form>
-        </div>
+    <div class="header">
+        <h1 class="text-center"><?php echo $title ?></h1>
     </div>
+
+    <div class="well">
+        <form class="form-vertical" action="index.php" method="post"  role="form" id="config-form">
+            <div class="form-group">
+                <label for="state-select">State:</label>
+                <select class="form-control" required id="state-select" name="state">
+                <?php
+                foreach(STATES as $key => $value) {
+                    echo "<option value='$key'>$value</option>";
+                }
+                ?>
+                </select>
+            </div>
+            <?php // TODO: add placeholders ?>
+            <div class="form-group">
+                <label for="institution-input">Institution name:</label>
+                <input class="form-control" type="text" required id="institution-input" name="institution">
+            </div>
+            <div class="form-group">
+                <label for="wskey-input">WorldCat API Key:</label>
+                <input class="form-control" type="text" required id="wskey-input" name="wskey">
+            </div>
+            <div class="form-group">
+                <br>
+                <input type="hidden" value="2" name="step">
+                <input class="btn btn-primary" type="submit" id="config-submit" value="Submit">
+            </div>
+        </form>
+    </div>
+
 </div>
 
 </body>

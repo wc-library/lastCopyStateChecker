@@ -8,10 +8,15 @@ define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "
     "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina",
     "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island",
     "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
-    "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming", "State" => "State"));
+    "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming"));
 
 // TODO: use .php file instead so can't leak to browser?
 define('CONFIG_PATH', 'config/init.ini');
+
+// Constant for page/app title. Placeholder is filled based on selected state
+define('TITLE_FORMAT_STRING', 'Last Copy in %s Checker');
+// Default state name to display
+define('DEFAULT_STATE', 'State');
 
 // If config file exists, parse it and go to $step 3
 if(file_exists(CONFIG_PATH)) {
@@ -26,7 +31,7 @@ if(file_exists(CONFIG_PATH)) {
 // Else set $step to 1 (or the post value for 'step', if set)
 else {
     $step = isset($_POST['step']) ? $_POST['step'] : 1;
-    $abb = "State";
+    $abb = DEFAULT_STATE;
 }
 
 
@@ -90,6 +95,7 @@ if (isset($_FILES['file-input']))
     exit;
 }
 
+// TODO: document
 function flag($oclc,$stateabb,$worldcatkey)
 {
     if ($json = file_get_contents("http://www.worldcat.org/webservices/catalog/content/libraries/$oclc?servicelevel=full&format=json&location=$stateabb&frbrGrouping=off&maximumLibraries=100&startLibrary=1&wskey=$worldcatkey"))
@@ -123,7 +129,14 @@ function flag($oclc,$stateabb,$worldcatkey)
 
     <!DOCTYPE html>
     <html lang = "en">
-    <?php include_once 'templates/header.php' ?>
+    <?php
+    // Set $state_title to currently selected state name if applicable
+    $state_title = (array_key_exists($abb, STATES)) ?
+        STATES['$abb'] : DEFAULT_STATE;
+    $title = sprintf(TITLE_FORMAT_STRING, $state_title);
+
+    include_once 'templates/header.php';
+    ?>
 
 <?php
 // TODO: extract <body> markup in each case to a template file
@@ -133,9 +146,9 @@ switch($step)
     case 1:
         include 'templates/index/step1.php';
         break;
-
+    // Step 2: After config file has been created
+    // TODO: use Ajax instead?
     case 2:
-
         $state = $_POST['state'];
         $libraryName = $_POST['institution'];
         $wskey = $_POST['wskey'];
@@ -184,7 +197,7 @@ switch($step)
             <div class = "row">
                 <div class = "col-sm-6 col-sm-offset-3">
                     <div>
-                        <h1 class="text-center">Last Copy in <?php echo STATES[$abb];?> Checker</h1>
+                        <h1 class="text-center"><?php echo $title ?></h1>
                     </div>
                     <div id = "striped_Box">
                         <div id = 'input' class = "col-sm-12">
