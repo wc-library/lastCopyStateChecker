@@ -10,7 +10,7 @@ define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "
     "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
     "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming"));
 
-// TODO: use .php file instead so can't leak to browser?
+// Config file path
 define('CONFIG_PATH', 'config/init.ini');
 
 // Constant for page/app title. Placeholder is filled based on selected state
@@ -127,21 +127,20 @@ function flag($oclc,$stateabb,$worldcatkey)
 }
 ?>
 
-    <!DOCTYPE html>
-    <html lang = "en">
-    <?php
-    // Set $state_title to currently selected state name if applicable
-    $state_title = (array_key_exists($abb, STATES)) ?
-        STATES['$abb'] : DEFAULT_STATE;
-    $title = sprintf(TITLE_FORMAT_STRING, $state_title);
+<!DOCTYPE html>
+<html lang = "en">
+<?php
+// Set $state_title to currently selected state name if applicable
+$state_title = (array_key_exists($abb, STATES)) ?
+    STATES[$abb] : DEFAULT_STATE;
+$title = sprintf(TITLE_FORMAT_STRING, $state_title);
 
-    include_once 'templates/header.php';
-    ?>
+include_once 'templates/header.php';
+?>
 
 <?php
 // TODO: extract <body> markup in each case to a template file
-switch($step)
-{
+switch($step) {
     // Step 1: Config file hasn't been created
     case 1:
         include 'templates/index/step1.php';
@@ -178,38 +177,7 @@ switch($step)
         break;
     // Step 3: After config file has been created
     case 3:
-        ?>
-
-        <body>
-        <div class = "container">
-            <div class = "row">
-                <div class = "col-sm-6 col-sm-offset-3">
-                    <div>
-                        <h1 class="text-center"><?php echo $title ?></h1>
-                    </div>
-                    <div id = "striped_Box">
-                        <div id = 'input' class = "col-sm-12">
-                            <label for='upload'>Upload Batch OCLC File:</label>
-                            <input type='file' id='upload' onchange="checkFile((this.files[0]));">
-                            <img src='Assets/ajax-loader.gif' id='loadingIcon' class='dNone'>
-                        </div>
-                        <div id='output' class='dNone' style = "text-align: center;">
-                            <div class = "col-sm-12">
-                                <h2>OCLC Number Responses</h2>
-                                <button type='button' id='downloadSimple' onclick='downloadSimple()' class = "btn btn-default">Download Simple</button>
-                                <button type='button' id='downloadDetailed' onclick='downloadDetailed()' class = "btn btn-default">Download Detailed</button>
-                            </div>
-                            <div class='dNone'>
-                                <h2>Entries Listed as 'At <?php echo $libraryName; ?>'</h2>
-                                <ol id='atLibrary'></ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </body>
-        <?php
+        include 'templates/index/step3.php';
         break;
 }	?>
 </html>
