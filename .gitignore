@@ -1,5 +1,7 @@
 # IDE workspace
 .idea
 
-# Config file
+# Config files (used to be saved to root directory)
 init.ini
+config/*.ini
+config/*.php

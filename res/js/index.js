@@ -16,8 +16,9 @@ function checkFile(file)
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
         {
             document.getElementById('loadingIcon').classList.add('dNone');
-            if (xmlhttp.responseText == '-1')
-            {}
+            if (xmlhttp.responseText == '-1') {
+                // TODO: is this necessary?
+            }
             else if (xmlhttp.responseText == "Connection_Error")
             {
                 alert("There were issues either parsing the file or connecting to www.worldcat.org");

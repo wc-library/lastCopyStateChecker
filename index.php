@@ -10,13 +10,12 @@ define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "
     "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
     "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming", "State" => "State"));
 
-// TODO: move to config/, add .htaccess to ensure API key isn't publically accessible, use .php file instead so can't leak to browser?
-// TODO: make this a constant? (it's never written to)
-$path = "init.ini";
+// TODO: use .php file instead so can't leak to browser?
+define('CONFIG_PATH', 'config/init.ini');
 
 // If config file exists, parse it and go to $step 3
-if(file_exists($path)) {
-    $data = parse_ini_file($path);
+if(file_exists(CONFIG_PATH)) {
+    $data = parse_ini_file(CONFIG_PATH);
     $keys = array_keys($data);
     $step = 3;
 
@@ -130,48 +129,9 @@ function flag($oclc,$stateabb,$worldcatkey)
 // TODO: extract <body> markup in each case to a template file
 switch($step)
 {
-    case 1:?>
-
-        <body>
-        <div class = "container">
-            <div class = "row">
-                <div class="col-sm-6 col-sm-offset-3">
-                    <form action = "index.php" method = "post"  role="form" id = 'striped_Box'>
-                        <div class = "col-sm-12">
-                            <label>Please Enter State Name:</label>
-                            <?php
-                            print "<select name = \"state\" class=\"form-control\">";
-
-                            foreach(array_keys(STATES) as $state)
-                            {
-                                print "<option value = \"$state\" >";
-                                print STATES[$state];
-                                print "</option>";
-                            }
-                            print "</select>";
-                            ?>
-                        </div>
-                        <div class = "col-sm-12">
-                            <label>Please Enter the Institution's Name:</label>
-                            <input type = "text" name = "institution" class = "form-control">
-                        </div>
-                        <div class = "col-sm-12">
-                            <label>Please Enter the Institution's WorldCat API Key:</label>
-                            <input type = "text" name = "wskey" class = "form-control">
-                        </div>
-                        <div class = "col-sm-12">
-                            <br/>
-                            <input type = "hidden" value = '2' name = "step">
-                            <input type = "submit" value = "Submit" class = "btn btn-default">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        </body>
-        </html>
-        <?php
+    // Step 1: Create config file
+    case 1:
+        include 'templates/index/step1.php';
         break;
 
     case 2:
@@ -192,7 +152,6 @@ switch($step)
             </div>
         </div>
         </body>
-        </html>
 
         <?php
         $iniData = [];
@@ -203,7 +162,7 @@ switch($step)
                 "wskey" => $wskey
             ];
 
-        $file = fopen($path, 'w');
+        $file = fopen(CONFIG_PATH, 'w');
         foreach ($iniData as $key => $value) {
             $dataToWrite[] = "[$key]";
             foreach ($value as $k => $v) {
@@ -225,7 +184,7 @@ switch($step)
             <div class = "row">
                 <div class = "col-sm-6 col-sm-offset-3">
                     <div>
-                        <h1 class="text-center">Last Copy in <?php print STATES[$abb];?> Checker</h1>
+                        <h1 class="text-center">Last Copy in <?php echo STATES[$abb];?> Checker</h1>
                     </div>
                     <div id = "striped_Box">
                         <div id = 'input' class = "col-sm-12">
@@ -240,7 +199,7 @@ switch($step)
                                 <button type='button' id='downloadDetailed' onclick='downloadDetailed()' class = "btn btn-default">Download Detailed</button>
                             </div>
                             <div class='dNone'>
-                                <h2>Entries Listed as 'At <?php print $libraryName; ?>'</h2>
+                                <h2>Entries Listed as 'At <?php echo $libraryName; ?>'</h2>
                                 <ol id='atLibrary'></ol>
                             </div>
                         </div>
@@ -249,7 +208,7 @@ switch($step)
             </div>
         </div>
         </body>
-        </html>
         <?php
         break;
 }	?>
+</html>
