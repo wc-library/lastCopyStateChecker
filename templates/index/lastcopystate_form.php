@@ -65,7 +65,8 @@
 
     </div>
 
-    <div id="output"></div>
+    <!--TODO: uncomment below once old form is replaced-->
+    <!--<div id="output"></div>-->
 
     <div class = "well">
         <?php // TODO: remove after merging w/ encoding level form ?>

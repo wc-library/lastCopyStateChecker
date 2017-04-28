@@ -1,4 +1,5 @@
 <?php
+// TODO: remove constants declarations (declared in handlers/functions/lastcopystate.php)
 // Array mapping state abbreviations to their full names
 define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas",
     "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida",
@@ -18,6 +19,8 @@ define('TITLE_FORMAT_STRING', 'Last Copy in %s Checker');
 // Default state name to display
 define('DEFAULT_STATE', 'State');
 
+
+// TODO: move to config/config.php
 // If config file exists, parse it and go to $step 3
 if(file_exists(CONFIG_PATH)) {
     $data = parse_ini_file(CONFIG_PATH);
@@ -35,6 +38,7 @@ else {
 }
 
 
+// TODO: move to handler
 if (isset($_FILES['file-input']))
 {
     if ($handle = fopen($_FILES['file-input']['tmp_name'], 'r'))
@@ -95,29 +99,52 @@ if (isset($_FILES['file-input']))
     exit;
 }
 
-// TODO: document
+/*
+ * FROM EARLIER REVISION:
+ +  # Function flag
+ +  #
+ +  # @param $oclc - OCLC number for a catalog entry
+ +  # Return:
+ +  #     String - String (usually error) to associate with that OCLC
+ +  #     -1 - Error connecting to worldcat
+ +  #     [0, ...] - No copy at Library, No copy found elsewhere in IL
+ +  #     [1, ...] - No copy at Library, Copy found elsewhere in IL
+ +  #     [2, ...] - Copy at Library, No copy found elsewhere in IL
+ +  #     [3, ...] - Copy at Library, Copy found elsewhere in IL
+ */
 function flag($oclc,$stateabb,$worldcatkey)
 {
+    // TODO: use CURL instead
     if ($json = file_get_contents("http://www.worldcat.org/webservices/catalog/content/libraries/$oclc?servicelevel=full&format=json&location=$stateabb&frbrGrouping=off&maximumLibraries=100&startLibrary=1&wskey=$worldcatkey"))
     {
         if ($json = json_decode($json))
         {
             if (!property_exists($json, 'library'))
             {
-                if ($oclc !== $json->OCLCnumber) return flag($json->OCLCnumber,$stateabb,$worldcatkey);
-                else return "Error: '" . $json->diagnostics->diagnostic->message . "'";
+                if ($oclc !== $json->OCLCnumber)
+                    return flag($json->OCLCnumber,$stateabb,$worldcatkey);
+                else
+                    return "Error: '" . $json->diagnostics->diagnostic->message . "'";
             }
+
+            // Initialize to 0 (not in library, not elsewhere in state)
             $returnValue[] = 0;
             foreach ( $json->library as $library)
             {
-                if (!property_exists($library, 'institutionName')) return "Error: '" . $library->diagnostic->message . "'";
+                if (!property_exists($library, 'institutionName'))
+                    return "Error: '" . $library->diagnostic->message . "'";
 
+                // If one of the libraries is this institution and we're at 0 or 1 (not in library)
                 if ($library->institutionName === $GLOBALS['libraryName'] && $returnValue[0] < 2)
                 {
+                    // Add 2 to mark that the copy was found at this library
                     $returnValue[0] += 2;
                     $returnValue['url'] = $library->opacUrl;
                 }
-                else if ($returnValue[0] % 2 === 0) $returnValue[0]++;
+                // If we found it at another institution at the state
+                else if ($returnValue[0] % 2 === 0)
+                    // Add 1 to mark that it's been found elsewhere
+                    $returnValue[0]++;
             }
             return $returnValue;
         }

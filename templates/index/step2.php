@@ -13,7 +13,7 @@
     </div>
 
     <div class="well">
-        <?php // TODO: use Ajax instead ?>
+        <?php // TODO: use Ajax & modal instead ?>
         <form class="text-center" action="index.php" method="post" id="continue-form">
             <h2>Your Library's Information Has Been Saved.</h2>
             <input type="submit" value="Continue" class="btn btn-primary">
