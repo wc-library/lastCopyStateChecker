@@ -56,3 +56,7 @@ function downloadDetailed()
 {
     document.location = 'data:application/octet-stream,' + encodeURIComponent(detailedOutput);
 }
+
+// TODO: copy stuff from biblevel-checker JavaScript, changing things as necessary
+
+

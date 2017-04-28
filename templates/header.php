@@ -18,4 +18,6 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <script src="res/js/index.js"></script>
+    <?php // TODO: remove once index-new.js is renamed to index.js ?>
+    <script src="res/js/index-new.js"></script>
 </head>

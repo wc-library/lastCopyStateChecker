@@ -7,5 +7,11 @@
 @import "bootswatch/bootswatch";
 
 // Mixins
+@import "mixins/transition";
 
 // Components
+@import "components/input";
+@import "components/loader";
+@import "components/collapse";
+@import "components/navs";
+@import "components/helper";

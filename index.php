@@ -177,7 +177,7 @@ switch($step) {
         break;
     // Step 3: After config file has been created
     case 3:
-        include 'templates/index/step3.php';
+        include 'templates/index/lastcopystate_form.php';
         break;
 }	?>
 </html>

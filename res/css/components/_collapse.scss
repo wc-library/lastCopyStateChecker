@@ -1,0 +1,36 @@
+/*
+ * Styling for collapse-toggle links.
+ * Adds a downward chevron to the right of the text. When .expanded class is added, chevron rotates 180 degrees
+ */
+
+
+.collapse-toggle {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+
+  &:after {
+    // From Bootstrap's glyphicon class
+    position: relative;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    // Chevron attributes
+    margin-left: 5px;
+    top: 0;
+    font-size: 10px;
+    content: "\e252"; // downward triangle glyphicon
+    @include transition(all 0.3s ease);
+  }
+
+  // when .expanded is added, rotate chevron 180 degrees (triangle pointing upwards)
+  &.expanded:after {
+    @include transform(rotate(180deg));
+  }
+}

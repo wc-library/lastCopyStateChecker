@@ -6612,6 +6612,139 @@ input[type="checkbox"],
 .carousel-caption h1, .carousel-caption h2, .carousel-caption h3, .carousel-caption h4, .carousel-caption h5, .carousel-caption h6 {
   color: inherit; }
 
+/*
+ * Additional styling for inputs
+ */
+div.checkbox {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+
+/*
+ * Bootstrap file upload input
+ * See https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3
+ */
+input[type="file"].form-control-file {
+  display: none; }
+
+input[type="text"].form-control-file {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem; }
+
+/*
+ * OCLC textarea styling
+ * (Theme textarea didn't look like an input)
+ */
+textarea.list-text-area, textarea.form-control.list-text-area {
+  padding: 15px;
+  border: none;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  background: #fff;
+  resize: none; }
+  textarea.list-text-area:focus, textarea.form-control.list-text-area:focus {
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); }
+
+/* for loading icon, from http://codepen.io/jczimm/pen/vEBpoL */
+.loader {
+  position: relative;
+  margin: 0 auto;
+  width: 30px; }
+  .loader:before {
+    content: '';
+    display: block;
+    padding-top: 100%; }
+
+.circular {
+  animation: rotate 2s linear infinite;
+  height: 100%;
+  transform-origin: center center;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto; }
+
+.path {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+  stroke-linecap: round; }
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg); } }
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0; }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px; }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px; } }
+@keyframes color {
+  100%,
+  0% {
+    stroke: #00447c; }
+  40% {
+    stroke: #0069aa; }
+  66% {
+    stroke: #00929f; }
+  80%,
+  90% {
+    stroke: #56a0d3; } }
+/*
+ * Styling for collapse-toggle links.
+ * Adds a downward chevron to the right of the text. When .expanded class is added, chevron rotates 180 degrees
+ */
+.collapse-toggle {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer; }
+  .collapse-toggle:after {
+    position: relative;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-left: 5px;
+    top: 0;
+    font-size: 10px;
+    content: "\e252";
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease; }
+  .collapse-toggle.expanded:after {
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg); }
+
+/*
+ * Supplement Bootstrap styling of its nav classes
+ */
+.tab-content {
+  margin-top: 15px; }
+
+/* Helper classes */
+.body-padding {
+  width: 100%;
+  height: 100px; }
+
 /* Custom Styling */
 #striped_Box {
   padding: 25px;
@@ -6621,9 +6754,9 @@ input[type="checkbox"],
   box-shadow: 2px 2px 8px #888;
   border-radius: 8px; }
 
-#input {
-  position: relative; }
-
+/*#input {
+  position: relative;
+}*/
 #loadingIcon {
   position: absolute;
   height: 100%;
