@@ -30,7 +30,7 @@ try {
 
         $library_locations = get_library_locations($oclc);
         // TODO: do something if $library_locations === false
-        $flag_results = flag($library_locations);
+        $flag_results = check_library_locations($library_locations);
         $results[$index] = ['oclc' => $oclc, 'flag' => $flag_results];
     }
 

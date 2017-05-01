@@ -1,27 +1,17 @@
 <?php
-// TODO: remove constants declarations (declared in handlers/functions/lastcopystate.php)
-// Array mapping state abbreviations to their full names
-define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas",
-    "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida",
-    "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa",
-    "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts",
-    "MI" => "Michigan", "MN" => "Minnesota", "MS" => "Mississippi", "MO" => "Missouri", "MT" => "Montana", "NE" => "Nebraska",
-    "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina",
-    "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island",
-    "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
-    "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming"));
 
-// Config file path
-// TODO: remove check for config file from index.php, handle with Ajax
-define('CONFIG_PATH', 'config/init.ini');
-
-// Constant for page/app title. Placeholder is filled based on selected state
-define('TITLE_FORMAT_STRING', 'Last Copy in %s Checker');
-// Default state name to display
-define('DEFAULT_STATE', 'State');
+try {
+    include_once 'config/config.php';
+}
+// if config file hasn't yet been created, include config form
+catch (ConfigFileExeption $e) {
+    // TODO: get rid of step system
+    $step = isset($_POST['step']) ? $_POST['step'] : 1;
+    $abb = DEFAULT_STATE;
+}
 
 
-// TODO: move to config/config.php
+// TODO: exception is caught by this point if config file doesn't exist
 // If config file exists, parse it and go to $step 3
 if(file_exists(CONFIG_PATH)) {
     $data = parse_ini_file(CONFIG_PATH);
@@ -31,11 +21,6 @@ if(file_exists(CONFIG_PATH)) {
     $abb = $data[$keys[0]];
     $libraryName = $data[$keys[1]];
     $wskey = $data[$keys[2]];
-}
-// Else set $step to 1 (or the post value for 'step', if set)
-else {
-    $step = isset($_POST['step']) ? $_POST['step'] : 1;
-    $abb = DEFAULT_STATE;
 }
 
 

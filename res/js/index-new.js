@@ -140,6 +140,7 @@ function uploadData(formData) {
  */
 function displayResults(data) {
     // TODO: implement for last copy state checker
+    console.log(data['results']);
 }
 
 
