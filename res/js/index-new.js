@@ -145,36 +145,91 @@ function displayResults(data) {
     // Table for results at the library
     var atLibraryTheadString = '<thead><tr><th>OCLC Number</th></tr></thead>';
     var atLibraryTableString = '<table class="table table-condensed table-striped">' + atLibraryTheadString + '<tbody>';
-    // TODO: collapsed tables for flagged, unflagged, and errors
+    // Table for flagged results
+    var flaggedTheadString = '<thead><tr><th>OCLC Number</th></tr></thead>';
+    var flaggedTableString = '<table class="table table-condensed table-striped">' + flaggedTheadString + '<tbody>';
+    // Table for unflagged results
+    var unflaggedTheadString = '<thead><tr><th>OCLC Number</th></tr></thead>';
+    var unflaggedTableString = '<table class="table table-condensed table-striped">' + unflaggedTheadString + '<tbody>';
+    // TODO: implement error checking server-side and display in table
 
-    // Check if any of the tables are empty
-    var atLibraryTableIsEmpty = true;
+    // Keep track of how many items are in each table
+    var atLibraryCount = 0;
+    var flaggedCount = 0;
+    var unflaggedCount = 0;
+    // TODO: errorCount = 0;
 
     // Iterate through results and add them to the table
     $.each(data['results'], function (i, item) {
         var isAtLibrary = item['flag']['at-library'];
         var isInState = item['flag']['in-state'];
 
+        // TODO: Add to error table if there's an error and skip the below checks?
         // Add to at library table if item is at this institution
         if (isAtLibrary) {
-            atLibraryTableIsEmpty = false;
+            atLibraryCount++;
             var catalogLink = '<a href="' + item['flag']['url'] + '" target="_blank">' + item['oclc'] + '</a>';
             atLibraryTableString += '<tr><td>' + catalogLink + '</td></tr>'
+        }
+        // Flag if not found elsewhere in state, otherwise add to unflagged table
+        if (!isInState) {
+            flaggedCount++;
+            flaggedTableString += '<tr><td>' + item['oclc'] + '</td></tr>';
+        } else {
+            unflaggedCount++;
+            unflaggedTableString += '<tr><td>' + item['oclc'] + '</td></tr>';
         }
     });
     // TODO: If no results are found in a table, display a message indicating such
 
     atLibraryTableString += '</tbody></table>';
+    flaggedTableString += '</tbody></table>';
+    unflaggedTableString += '</tbody></table>';
+    // TODO: errorTableString += '</tbody></table>';
 
     var outputDiv = $('#output');
-    outputDiv.html('<h2><span class="glyphicon glyphicon-ok-sign text-success"></span> Items Processed.</h2>');
+    outputDiv.html('<h2><span class="glyphicon glyphicon-ok-sign text-success"></span> Items Processed.</h2><p>Click on the headings to see the lists of OCLC numbers.</p>');
 
     // Assemble at library panel and append it to output
-    var atLibraryPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Entries listed as at ' + configInstitution + '</h3></div>';
+    // TODO: make collapsible, expand by default
+    var atLibraryCountBadge = ' <span class="badge">' + atLibraryCount + '</span>';
+    var atLibraryPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Entries listed as at ' + configInstitution + atLibraryCountBadge + '</h3></div>';
     var atLibraryPanelBodyString = '<div class="panel-body">' + atLibraryTableString + '</div>';
     var atLibraryPanel = '<div class="panel panel-primary">' + atLibraryPanelHeadingString +
         atLibraryPanelBodyString + '</div>';
     outputDiv.append(atLibraryPanel);
+
+    // Assemble flaggedPanel and append to output
+    var flaggedCountBadge = ' <span class="badge">' + flaggedCount + '</span>';
+    var flaggedPanelTitleString = '<h3 class="panel-title collapse-toggle" id="flagged-collapse-toggle" data-toggle="collapse" href="#flagged-collapse">Flagged OCLCs ' + flaggedCountBadge + '</h3>';
+    var flaggedPanelHeadingString = '<div class="panel-heading">' + flaggedPanelTitleString + '</div>';
+    var flaggedPanelBody = $('<div id="flagged-collapse" class="panel-collapse collapse"></div>');
+    flaggedPanelBody.html('<div class="panel-body">' + flaggedTableString + '</div>');
+    // Rotate collapse chevron in #flagged-collapse-toggle when div is collapsing/expanding
+    flaggedPanelBody.on('show.bs.collapse hide.bs.collapse', function () {
+        $('#flagged-collapse-toggle').toggleClass('expanded');
+    });
+    var flaggedPanel = $('<div class="panel panel-warning"></div>');
+    flaggedPanel.append(flaggedPanelHeadingString, flaggedPanelBody);
+    outputDiv.append('<hr>', flaggedPanel);
+
+    // Assemble unflaggedPanel and append to output
+    var unflaggedCountBadge = ' <span class="badge">' + unflaggedCount + '</span>';
+    var unflaggedPanelTitleString = '<h3 class="panel-title collapse-toggle" id="unflagged-collapse-toggle" data-toggle="collapse" href="#unflagged-collapse">Unflagged OCLCs ' + unflaggedCountBadge + '</h3>';
+    var unflaggedPanelHeadingString = '<div class="panel-heading">' + unflaggedPanelTitleString + '</div>';
+    var unflaggedPanelBody = $('<div id="unflagged-collapse" class="panel-collapse collapse"></div>');
+    unflaggedPanelBody.html('<div class="panel-body">' + unflaggedTableString + '</div>');
+    // Rotate collapse chevron in #unflagged-collapse-toggle when div is collapsing/expanding
+    unflaggedPanelBody.on('show.bs.collapse hide.bs.collapse', function () {
+        $('#unflagged-collapse-toggle').toggleClass('expanded');
+    });
+    var unflaggedPanel = $('<div class="panel panel-info"></div>');
+    unflaggedPanel.append(unflaggedPanelHeadingString, unflaggedPanelBody);
+    outputDiv.append('<hr>', unflaggedPanel);
+
+    // TODO: Assemble errorPanel and append to output
+
+
 }
 
 
