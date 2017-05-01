@@ -191,17 +191,22 @@ function displayResults(data) {
     outputDiv.html('<h2><span class="glyphicon glyphicon-ok-sign text-success"></span> Items Processed.</h2><p>Click on the headings to see the lists of OCLC numbers.</p>');
 
     // Assemble at library panel and append it to output
-    // TODO: make collapsible, expand by default
-    var atLibraryCountBadge = ' <span class="badge">' + atLibraryCount + '</span>';
-    var atLibraryPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Entries listed as at ' + configInstitution + atLibraryCountBadge + '</h3></div>';
-    var atLibraryPanelBodyString = '<div class="panel-body">' + atLibraryTableString + '</div>';
-    var atLibraryPanel = '<div class="panel panel-primary">' + atLibraryPanelHeadingString +
-        atLibraryPanelBodyString + '</div>';
+    var atLibraryCountBadge = '<span class="badge">' + atLibraryCount + '</span>';
+    var atLibraryPanelTitleString = '<h3 class="panel-title collapse-toggle" id="at-library-collapse-toggle" data-toggle="collapse" href="#at-library-collapse">' + atLibraryCountBadge + ' Entries listed as at ' + configInstitution + '</h3>';
+    var atLibraryPanelHeadingString = '<div class="panel-heading">' + atLibraryPanelTitleString + '</div>';
+    var atLibraryPanelBody = $('<div id="at-library-collapse" class="panel-collapse collapse"></div>');
+    atLibraryPanelBody.html('<div class="panel-body">' + atLibraryTableString + '</div>');
+    // Rotate collapse chevron in #at-library-collapse-toggle when div is collapsing/expanding
+    atLibraryPanelBody.on('show.bs.collapse hide.bs.collapse', function () {
+        $('#at-library-collapse-toggle').toggleClass('expanded');
+    });
+    var atLibraryPanel = $('<div class="panel panel-primary"></div>');
+    atLibraryPanel.append(atLibraryPanelHeadingString, atLibraryPanelBody);
     outputDiv.append(atLibraryPanel);
 
     // Assemble flaggedPanel and append to output
-    var flaggedCountBadge = ' <span class="badge">' + flaggedCount + '</span>';
-    var flaggedPanelTitleString = '<h3 class="panel-title collapse-toggle" id="flagged-collapse-toggle" data-toggle="collapse" href="#flagged-collapse">Flagged OCLCs ' + flaggedCountBadge + '</h3>';
+    var flaggedCountBadge = '<span class="badge">' + flaggedCount + '</span>';
+    var flaggedPanelTitleString = '<h3 class="panel-title collapse-toggle" id="flagged-collapse-toggle" data-toggle="collapse" href="#flagged-collapse">' + flaggedCountBadge + ' Flagged OCLCs</h3>';
     var flaggedPanelHeadingString = '<div class="panel-heading">' + flaggedPanelTitleString + '</div>';
     var flaggedPanelBody = $('<div id="flagged-collapse" class="panel-collapse collapse"></div>');
     flaggedPanelBody.html('<div class="panel-body">' + flaggedTableString + '</div>');
@@ -214,8 +219,8 @@ function displayResults(data) {
     outputDiv.append('<hr>', flaggedPanel);
 
     // Assemble unflaggedPanel and append to output
-    var unflaggedCountBadge = ' <span class="badge">' + unflaggedCount + '</span>';
-    var unflaggedPanelTitleString = '<h3 class="panel-title collapse-toggle" id="unflagged-collapse-toggle" data-toggle="collapse" href="#unflagged-collapse">Unflagged OCLCs ' + unflaggedCountBadge + '</h3>';
+    var unflaggedCountBadge = '<span class="badge">' + unflaggedCount + '</span>';
+    var unflaggedPanelTitleString = '<h3 class="panel-title collapse-toggle" id="unflagged-collapse-toggle" data-toggle="collapse" href="#unflagged-collapse">' + unflaggedCountBadge + ' Unflagged OCLCs</h3>';
     var unflaggedPanelHeadingString = '<div class="panel-heading">' + unflaggedPanelTitleString + '</div>';
     var unflaggedPanelBody = $('<div id="unflagged-collapse" class="panel-collapse collapse"></div>');
     unflaggedPanelBody.html('<div class="panel-body">' + unflaggedTableString + '</div>');
