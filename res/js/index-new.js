@@ -105,6 +105,8 @@ function getTextInputFormData() {
 function uploadData(formData) {
     // Disable form while uploading
     disableUploadForm(true);
+    // Show loader
+    showLoader(true, 'Processing list...');
     $.ajax({
         url: 'handlers/lastcopystate_handler.php',
         dataType: 'json',
@@ -129,6 +131,7 @@ function uploadData(formData) {
         },
         complete: function () {
             disableUploadForm(false);
+            showLoader(false);
         }
     });
 }
@@ -146,14 +149,25 @@ function displayResults(data) {
 
 /**
  * Display spinning loading icon in an element
- * @param targetId String identifer or jQuery object of the element to display the loader in
+ * @param {boolean} setVisible True = show loading dialog, false = hide loading dialog
+ * @param {string} [loadingMessage] Message to display below loader
  */
-// TODO: display modal instead
-function showLoader(targetId) {
-    // Function accepts string representing id or jQuery object of element
-    var targetElement = (targetId instanceof jQuery) ? targetId : $(targetId);
-    // Clear contents of target and show loader
-    targetElement.html(loader);
+function showLoader(setVisible, loadingMessage) {
+    if (setVisible) {
+        loadingMessage = loadingMessage || 'Loading...';
+        var options = {
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        };
+        // Set loading message
+        $('#loading-dialog-message').text(loadingMessage);
+        // Toggle modal display
+        $('#loading-dialog').modal(options);
+    }
+    else {
+        $('#loading-dialog').modal('hide');
+    }
 }
 
 
@@ -267,6 +281,9 @@ function refreshSubmitButtonState() {
 }
 
 
+
+
+
 /* On page load */
 $(function () {
 
@@ -313,7 +330,6 @@ $(function () {
 
 
     var lastCopyStateForm = $('#lasty-copy-state-form');
-    var outputDiv = $('#output');
 
     // Assign listener to file upload form
     lastCopyStateForm.submit(function (event) {
@@ -329,16 +345,12 @@ $(function () {
             return;
         }
 
-        // Show loader and send data to server
-        showLoader(outputDiv);
-        // Scroll to bottom of page (#output may be off-screen)
-        // TODO: remove this once modal is implemented
-        $('html, body').animate({scrollTop: $(document).height()-$(window).height()}, 800);
-
         uploadData(formData);
     });
 
     // #list-text-tab is selected by default, so add listener and set state on page load
     formState = listTextStateObject;
     $('#list-text-input').on('change input paste', onTextInput);
+
+    // TODO: detach both forms?
 });

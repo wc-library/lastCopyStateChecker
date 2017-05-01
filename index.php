@@ -1,5 +1,6 @@
 <?php
 
+// TODO: remove checks for config file, handle through Ajax
 try {
     include_once 'config/config.php';
 }
@@ -152,11 +153,10 @@ include_once 'templates/header.php';
 ?>
 
 <?php
-// TODO: extract <body> markup in each case to a template file
 switch($step) {
     // Step 1: Config file hasn't been created
     case 1:
-        include 'templates/index/step1.php';
+        include 'templates/index/config_form.php';
         break;
     // Step 2: After config form has been submitted
     // TODO: use Ajax instead. Bugs can arise if we reach case 2 without setting variables (e.g. fill out form in case 1, delete ini file, refresh page on step 2)

@@ -15,12 +15,6 @@ define('CONFIG_PATH', $_SERVER['DOCUMENT_ROOT'].'/lastCopyStateChecker/config/in
  */
 class ConfigFileExeption extends Exception {}
 
-
-// Throw exception if config file doesn't exist
-if(!file_exists(CONFIG_PATH)) {
-    throw new ConfigFileExeption('Config file does not exist.');
-}
-
 // Associative array CONFIG
 define('CONFIG', parse_ini_file(CONFIG_PATH));
 // Config values from INI

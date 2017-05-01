@@ -1,18 +1,11 @@
 <?php
 /**
- * HTML for configuration step 1
+ * Markup for config form
  */
 // TODO: move to different directory? Not technically a template
 ?>
 
-<body>
-<div class="container">
-
-    <div class="header">
-        <h1 class="text-center"><?php echo $title ?></h1>
-    </div>
-
-    <div class="well">
+    <div class="well hidden" id="config-form-container">
         <?php // TODO: use Ajax, issues can arise setting action to self ?>
         <form class="form-vertical" action="index.php" method="post"  role="form" id="config-form">
             <div class="form-group">
@@ -41,7 +34,3 @@
             </div>
         </form>
     </div>
-
-</div>
-
-</body>

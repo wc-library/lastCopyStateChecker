@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?php echo $title; ?></title>
+    <title>Last Copy in State Checker</title>
 
     <?php // stylesheet includes Bootstrap + Bootswatch theme ?>
     <link rel="stylesheet" href="res/css/index.css">
@@ -18,6 +18,7 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <script src="res/js/index.js"></script>
+    <script src="res/js/config.js"></script>
     <?php // TODO: remove once index-new.js is renamed to index.js ?>
     <script src="res/js/index-new.js"></script>
 </head>

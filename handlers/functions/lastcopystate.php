@@ -5,6 +5,10 @@
 
 // Include configuration data (exception thrown if file doesn't exist)
 include_once $_SERVER['DOCUMENT_ROOT'] . '/lastCopyStateChecker/config/config.php';
+// Throw exception if config file doesn't exist
+if(!file_exists(CONFIG_PATH)) {
+    throw new ConfigFileExeption('Config file does not exist.');
+}
 
 
 /* Functions */
