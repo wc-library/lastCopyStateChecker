@@ -12,6 +12,7 @@ define('STATES', array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "
     "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming"));
 
 // Config file path
+// TODO: remove check for config file from index.php, handle with Ajax
 define('CONFIG_PATH', 'config/init.ini');
 
 // Constant for page/app title. Placeholder is filled based on selected state

@@ -66,10 +66,10 @@
     </div>
 
     <!--TODO: uncomment below once old form is replaced-->
-    <!--<div id="output"></div>-->
+    <div id="output"></div>
 
-    <div class = "well">
-        <?php // TODO: remove after merging w/ encoding level form ?>
+    <!--<div class = "well">
+        <?php /*// TODO: remove after merging w/ encoding level form */?>
         <div id = "input" class = "col-sm-12">
             <label for='upload'>Upload Batch OCLC File:</label>
             <input type='file' id='upload' onchange="checkFile((this.files[0]));">
@@ -82,10 +82,10 @@
                 <button type='button' id='downloadDetailed' onclick='downloadDetailed()' class = "btn btn-default">Download Detailed</button>
             </div>
             <div class='dNone'>
-                <h2>Entries Listed as 'At <?php echo $libraryName; ?>'</h2>
+                <h2>Entries Listed as 'At <?php /*echo $libraryName; */?>'</h2>
                 <ol id='atLibrary'></ol>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
 </body>
