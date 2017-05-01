@@ -3,6 +3,8 @@
  * Markup for config form
  */
 // TODO: move to different directory? Not technically a template
+// Include constants (for state select form)
+include_once $_SERVER['DOCUMENT_ROOT'] . '/lastCopyStateChecker/config/constants.php';
 ?>
 
     <div class="well hidden" id="config-form-container">
@@ -30,7 +32,7 @@
             <div class="form-group">
                 <br>
                 <input type="hidden" value="2" name="step">
-                <input class="btn btn-primary" type="submit" id="config-submit" value="Submit">
+                <input class="btn btn-primary" type="submit" id="config-form-submit" value="Submit">
             </div>
         </form>
     </div>

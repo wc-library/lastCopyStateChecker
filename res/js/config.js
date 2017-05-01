@@ -71,6 +71,7 @@ function setConfig(formData) {
  * @returns {FormData} FormData object with config values
  */
 function getConfigFormData() {
+    // TODO: throw exception if required fields are blank
     var state = $('#state-select').find(':selected').val();
     var institution = $('#institution-input').val();
     var wskey = $('#wskey-input').val();
@@ -111,10 +112,36 @@ function showLastCopyStateForm(setVisible) {
 }
 
 
+/**
+ * Enable/disable submit button based on form requirements
+ */
+function refreshConfigSubmitButtonState() {
+    // TODO: check state select
+    var setDisabled = ($('#institution-input').val() === '') || ($('#wskey-input').val() === '');
+    $('#config-form-submit').prop('disabled', setDisabled);
+}
+
+
 /* On page load */
 $(function () {
 
     // TODO: assign listener to config form
+    $('#config-form').submit(function (event) {
+        event.preventDefault();
+        // If required form data isn't present, display an error and return
+        var formData;
+        try {
+            formData = getConfigFormData();
+        } catch (e) {
+            // Display error message
+            displayError(e);
+            return;
+        }
+
+        setConfig(formData);
+    });
+
+    // TODO: add listeners to inputs to refresh submit button state on change
 
     // Check if configuration data needs to be set
     getConfig();

@@ -221,7 +221,7 @@ function disableUploadForm(setDisabled) {
     formState.disableInput(setDisabled);
 
     $('input[type="checkbox"]').prop('disabled', setDisabled);
-    $('#file-select-submit').prop('disabled', setDisabled);
+    $('#last-copy-state-submit').prop('disabled', setDisabled);
     $('ul.nav-tabs').find('a').prop('disabled', setDisabled);
 }
 
@@ -277,7 +277,7 @@ function textEntered() {
 function refreshSubmitButtonState() {
     // disabled = false if current form requirement function returns true
     var setDisabled = !formState.formRequirementCheck();
-    $('input[type=submit]').prop('disabled', setDisabled);
+    $('#last-copy-state-submit').prop('disabled', setDisabled);
 }
 
 

@@ -51,7 +51,7 @@
         <hr>
 
         <input class="btn btn-primary" type="submit" disabled
-               id="file-select-submit" name="file-select-submit" value="Submit">
+               id="last-copy-state-submit" name="last-copy-state-submit" value="Submit">
     </form>
 
 </div>
