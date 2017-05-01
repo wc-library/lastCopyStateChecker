@@ -142,8 +142,39 @@ function uploadData(formData) {
  * @param data Results of the last copy state check
  */
 function displayResults(data) {
-    // TODO: implement for last copy state checker
-    console.log(data['results']);
+    // Table for results at the library
+    var atLibraryTheadString = '<thead><tr><th>OCLC Number</th></tr></thead>';
+    var atLibraryTableString = '<table class="table table-condensed table-striped">' + atLibraryTheadString + '<tbody>';
+    // TODO: collapsed tables for flagged, unflagged, and errors
+
+    // Check if any of the tables are empty
+    var atLibraryTableIsEmpty = true;
+
+    // Iterate through results and add them to the table
+    $.each(data['results'], function (i, item) {
+        var isAtLibrary = item['flag']['at-library'];
+        var isInState = item['flag']['in-state'];
+
+        // Add to at library table if item is at this institution
+        if (isAtLibrary) {
+            atLibraryTableIsEmpty = false;
+            var catalogLink = '<a href="' + item['flag']['url'] + '" target="_blank">' + item['oclc'] + '</a>';
+            atLibraryTableString += '<tr><td>' + catalogLink + '</td></tr>'
+        }
+    });
+    // TODO: If no results are found in a table, display a message indicating such
+
+    atLibraryTableString += '</tbody></table>';
+
+    var outputDiv = $('#output');
+    outputDiv.html('<h2><span class="glyphicon glyphicon-ok-sign text-success"></span> Items Processed.</h2>');
+
+    // Assemble at library panel and append it to output
+    var atLibraryPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Entries listed as at ' + configInstitution + '</h3></div>';
+    var atLibraryPanelBodyString = '<div class="panel-body">' + atLibraryTableString + '</div>';
+    var atLibraryPanel = '<div class="panel panel-primary">' + atLibraryPanelHeadingString +
+        atLibraryPanelBodyString + '</div>';
+    outputDiv.append(atLibraryPanel);
 }
 
 

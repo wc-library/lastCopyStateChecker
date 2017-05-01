@@ -35,6 +35,7 @@ if (isset($_FILES['file-input']))
             if (trim($line) !== "")
             {
                 $flag = flag(trim($line),$abb,$wskey);
+
                 if (gettype($flag) === 'string')
                 {
                     $flagged[] = $line;
@@ -42,8 +43,12 @@ if (isset($_FILES['file-input']))
                 }
                 else
                 {
-                    if ($flag[0] % 2 === 0) $flagged[] = $line;
-                    else $unflagged[] = $line;
+                    // 0 or 2 (not elsewhere)
+                    if ($flag[0] % 2 === 0)
+                        $flagged[] = $line;
+                    else
+                        $unflagged[] = $line;
+                    // 2 or 3 (here)
                     if ($flag[0] >= 2)
                     {
                         $atLibrary[] = $line;
@@ -58,6 +63,7 @@ if (isset($_FILES['file-input']))
             }
         }
         fclose($handle);
+
         $simpleOutput = '';
         if (isset($flagged)) $simpleOutput = implode($flagged);
         $output = '';

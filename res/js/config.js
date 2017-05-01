@@ -2,6 +2,13 @@
  * Functions for getting/setting configuration values
  */
 
+/* Variables */
+// State and institution set in config file (initialized to generic values)
+var configState = 'State';
+var configInstitution = 'Institution';
+
+
+/* Functions */
 
 /**
  * Ajax query to retrieve configuration data and determine which form to display.
@@ -22,10 +29,15 @@ function getConfig() {
             $('#header-title').text(data['title']);
             // If data['config'] isn't false, load last copy state form
             if (data['config']) {
+                // Set corresponding variables
+                configState = data['config']['state'];
+                configInstitution = data['config']['institution'];
+                showConfigForm(false);
                 showLastCopyStateForm(true);
             }
             // Else, load config form
             else {
+                showLastCopyStateForm(false);
                 showConfigForm(true);
             }
         },
@@ -55,10 +67,10 @@ function setConfig(formData) {
         data: formData,
         type: 'POST',
         success: function (data) {
-            // TODO: display confirmation message in output
+            // Display confirmation message in output
             displaySuccess('Config file successfully created.');
-            showConfigForm(false);
-            showLastCopyStateForm(true);
+            // Ensure that config file was set and set variables accordingly
+            getConfig();
         },
         complete: function () {
             showLoader(false);

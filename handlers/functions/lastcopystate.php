@@ -77,7 +77,7 @@ function get_library_locations($oclc) {
  *
  */
 function check_library_locations($library_locations) {
-    global $library;
+    global $libraryName;
 
     // Initialize results array
     $results = [
@@ -90,7 +90,7 @@ function check_library_locations($library_locations) {
     foreach ($library_locations as $library) {
         // TODO: handle case where $library doesn't have key 'institutionName'?
         // If it's at this library and we haven't marked it as such already
-        if ($library['institutionName'] === $library && !$results['at-library']) {
+        if ($library['institutionName'] === $libraryName && !$results['at-library']) {
             // Set $results['at-library'] to true and ['url'] to URL for item in institution's local catalog
             $results['at-library'] = true;
             $results['url'] = $library['opacUrl'];
