@@ -13,6 +13,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/lastCopyStateChecker/config/constants
             <div class="form-group">
                 <label for="state-select">State:</label>
                 <select class="form-control" required id="state-select" name="state">
+                    <option value="" disabled selected>Select a state</option>
                 <?php
                 foreach(STATES as $key => $value) {
                     echo "<option value='$key'>$value</option>";
@@ -32,7 +33,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/lastCopyStateChecker/config/constants
             <div class="form-group">
                 <br>
                 <input type="hidden" value="2" name="step">
-                <input class="btn btn-primary" type="submit" id="config-form-submit" value="Submit">
+                <input class="btn btn-primary" type="submit"  disabled
+                       id="config-form-submit" value="Submit">
             </div>
         </form>
     </div>

@@ -43,7 +43,8 @@ function getConfig() {
  */
 function setConfig(formData) {
     showLoader(true, 'Creating configuration file...');
-    // TODO: disable config form while uploading
+    // disable config form while uploading
+    disableConfigForm(true);
     // Set function to 'set'
     formData.append('function', 'set');
     $.ajax({
@@ -55,13 +56,14 @@ function setConfig(formData) {
         type: 'POST',
         success: function (data) {
             // TODO: display confirmation message in output
+            displaySuccess('Config file successfully created.');
             showConfigForm(false);
             showLastCopyStateForm(true);
         },
         complete: function () {
             showLoader(false);
         }
-        // TODO: error handling
+        // TODO: error: display message and re-enable config form
     });
 }
 
@@ -116,8 +118,23 @@ function showLastCopyStateForm(setVisible) {
  * Enable/disable submit button based on form requirements
  */
 function refreshConfigSubmitButtonState() {
-    // TODO: check state select
-    var setDisabled = ($('#institution-input').val() === '') || ($('#wskey-input').val() === '');
+    // Disable submit button if any of the required inputs are empty
+    var setDisabled =
+        ($('#state-select').find(':selected').val() === '') ||
+        ($('#institution-input').val() === '') ||
+        ($('#wskey-input').val() === '');
+    $('#config-form-submit').prop('disabled', setDisabled);
+}
+
+
+/**
+ * Disables or enables the form
+ * @param {boolean} setDisabled Disable form if true, enable it if false
+ */
+function disableConfigForm(setDisabled) {
+    $('#state-select').prop('disabled', setDisabled);
+    $('#institution-input').prop('disabled', setDisabled);
+    $('#wskey-input').prop('disabled', setDisabled);
     $('#config-form-submit').prop('disabled', setDisabled);
 }
 
@@ -125,7 +142,7 @@ function refreshConfigSubmitButtonState() {
 /* On page load */
 $(function () {
 
-    // TODO: assign listener to config form
+    // Assign listener to config form
     $('#config-form').submit(function (event) {
         event.preventDefault();
         // If required form data isn't present, display an error and return
@@ -141,7 +158,10 @@ $(function () {
         setConfig(formData);
     });
 
-    // TODO: add listeners to inputs to refresh submit button state on change
+    // Add listeners to inputs to refresh submit button state on change
+    $('#state-select').change(refreshConfigSubmitButtonState);
+    $('#institution-input').on('change input paste', refreshConfigSubmitButtonState);
+    $('#wskey-input').on('change input paste', refreshConfigSubmitButtonState);
 
     // Check if configuration data needs to be set
     getConfig();

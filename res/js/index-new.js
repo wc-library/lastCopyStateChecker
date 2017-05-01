@@ -189,6 +189,23 @@ function displayError(message) {
 
 
 /**
+ * Displays a success message in the output div
+ * @param message Message to display
+ */
+function displaySuccess(message) {
+    var successPanelString =
+        [
+            '<div class="panel panel-default">',
+            '  <div class="panel-body text-success">',
+            '    <span class="glyphicon glyphicon-ok-sign"></span> ' + message,
+            '  </div>',
+            '</div>'
+        ].join('\n');
+    $('#output').html(successPanelString);
+}
+
+
+/**
  * Disables or enables the file select input
  * @param {boolean} setDisabled Disable input if true, enable it if false
  */
