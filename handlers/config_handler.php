@@ -3,13 +3,25 @@
  * Handles Ajax queries for getting/setting config data
  */
 
+include_once '../config/config.php';
+
+// Check for old config file at root of application to prevent API key being readable client-sie
+if (file_exists('../init.ini')) {
+    // If config file exists in config/, just remove the old file
+    if (file_exists(CONFIG_PATH))
+        unlink('../init.ini');
+    // If old config file exists but new one doesn't, move the old one to the proper directory
+    else {
+        rename('../init.ini', '../config/init.ini');
+    }
+}
+
 // Get the function requested by ajax query
 $function = $_POST['function'];
 // Data to return
 $data = [];
 
 try {
-    include_once '../config/config.php';
 
     // Determine what function to perform based on query
     switch ($function) {
