@@ -2,7 +2,6 @@
 /**
  * Template file for page headers
  */
-// TODO: make generic
 
 ?>
 <head>
@@ -19,6 +18,4 @@
 
     <script src="res/js/index.js"></script>
     <script src="res/js/config.js"></script>
-    <?php // TODO: remove once index-new.js is renamed to index.js ?>
-    <script src="res/js/index-new.js"></script>
 </head>
