@@ -6745,37 +6745,9 @@ textarea.list-text-area, textarea.form-control.list-text-area {
   width: 100%;
   height: 100px; }
 
-/* Custom Styling */
-#striped_Box {
-  padding: 25px;
-  margin: auto;
-  border: 1px #AAF solid;
-  overflow: hidden;
-  box-shadow: 2px 2px 8px #888;
-  border-radius: 8px; }
-
-/*#input {
-  position: relative;
-}*/
-#loadingIcon {
-  position: absolute;
-  height: 100%;
-  left: 0;
-  right: 0;
-  margin: auto;
-  top: 0; }
-
-.dNone {
-  display: none; }
-
-#output {
-  position: relative; }
-
-#atLibrary {
-  background: #fcfcfc;
-  border: 2px black solid;
-  border-radius: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px; }
+/* Additional styling for modal */
+@media (min-width: 768px) {
+  .modal-dialog {
+    margin: 150px auto 30px auto; } }
 
 /*# sourceMappingURL=index.css.map */

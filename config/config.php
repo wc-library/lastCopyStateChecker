@@ -17,11 +17,3 @@ class ConfigFileExeption extends Exception {}
 
 // Associative array CONFIG
 define('CONFIG', parse_ini_file(CONFIG_PATH));
-// Config values from INI
-// TODO: make variable names consistent with config file (or config keys consistent with variables)
-// State abbreviation
-$abb = CONFIG['state'];
-// Library name
-$libraryName = CONFIG['institution'];
-// WorldCat API key
-$api_key = CONFIG['wskey'];

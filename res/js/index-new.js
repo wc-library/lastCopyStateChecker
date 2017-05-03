@@ -151,20 +151,31 @@ function displayResults(data) {
     // Table for unflagged results
     var unflaggedTheadString = '<thead><tr><th>OCLC Number</th></tr></thead>';
     var unflaggedTableString = '<table class="table table-condensed table-striped">' + unflaggedTheadString + '<tbody>';
-    // TODO: implement error checking server-side and display in table
+    // Table for errors
+    var errorTheadString = '<thead><tr><th>OCLC Number</th><th>Error Message</th></tr></thead>';
+    var errorTableString = '<table class="table table-condensed table-striped">' + errorTheadString + '<tbody>';
 
     // Keep track of how many items are in each table
     var atLibraryCount = 0;
     var flaggedCount = 0;
     var unflaggedCount = 0;
-    // TODO: errorCount = 0;
+    var errorCount = 0;
 
     // Iterate through results and add them to the table
     $.each(data['results'], function (i, item) {
+        // Check for errors
+        if (item['flag'] === null) {
+            errorCount++;
+            var errorMessage = item['error'] !== undefined ?
+                item['error'] : 'An unknown error has occurred';
+            // Add to error table
+            errorTableString += '<tr><td>' + item['oclc'] + '</td><td>' + errorMessage + '</td></tr>';
+            return;
+        }
+
         var isAtLibrary = item['flag']['at-library'];
         var isInState = item['flag']['in-state'];
 
-        // TODO: Add to error table if there's an error and skip the below checks?
         // Add to at library table if item is at this institution
         if (isAtLibrary) {
             atLibraryCount++;
@@ -180,12 +191,22 @@ function displayResults(data) {
             unflaggedTableString += '<tr><td>' + item['oclc'] + '</td></tr>';
         }
     });
-    // TODO: If no results are found in a table, display a message indicating such
+    // If no results are found in a table, display a message indicating such
+    if (atLibraryCount < 1) {
+        atLibraryTableString += '<tr><td class="text-muted">No results listed as at ' + configInstitution + '.</td></tr>';
+    }
+    if (flaggedCount < 1) {
+        flaggedTableString += '<tr><td class="text-muted">No flagged results.</td></tr>';
+    }
+    if (unflaggedCount < 1) {
+        unflaggedTableString += '<tr><td class="text-muted">No unflagged results.</td></tr>';
+    }
+    // Error table isn't displayed if errorCount < 1
 
     atLibraryTableString += '</tbody></table>';
     flaggedTableString += '</tbody></table>';
     unflaggedTableString += '</tbody></table>';
-    // TODO: errorTableString += '</tbody></table>';
+    errorTableString += '</tbody></table>';
 
     var outputDiv = $('#output');
     outputDiv.html('<h2><span class="glyphicon glyphicon-ok-sign text-success"></span> Items Processed.</h2><p>Click on the headings to see the lists of OCLC numbers.</p>');
@@ -232,7 +253,21 @@ function displayResults(data) {
     unflaggedPanel.append(unflaggedPanelHeadingString, unflaggedPanelBody);
     outputDiv.append('<hr>', unflaggedPanel);
 
-    // TODO: Assemble errorPanel and append to output
+    // Assemble errorPanel and append to output if any errors were found
+    if (errorCount > 0) {
+        var errorCountBadge = '<span class="badge">' + errorCount + '</span>';
+        var errorPanelTitleString = '<h3 class="panel-title collapse-toggle" id="error-collapse-toggle" data-toggle="collapse" href="#error-collapse">' + errorCountBadge + ' Errors</h3>';
+        var errorPanelHeadingString = '<div class="panel-heading">' + errorPanelTitleString + '</div>';
+        var errorPanelBody = $('<div id="error-collapse" class="panel-collapse collapse"></div>');
+        errorPanelBody.html('<div class="panel-body">' + errorTableString + '</div>');
+        // Rotate collapse chevron in #error-collapse-toggle when div is collapsing/expanding
+        errorPanelBody.on('show.bs.collapse hide.bs.collapse', function () {
+            $('#error-collapse-toggle').toggleClass('expanded');
+        });
+        var errorPanel = $('<div class="panel panel-danger"></div>');
+        errorPanel.append(errorPanelHeadingString, errorPanelBody);
+        outputDiv.append('<hr>', errorPanel);
+    }
 
 
 }
@@ -459,6 +494,4 @@ $(function () {
     // #list-text-tab is selected by default, so add listener and set state on page load
     formState = listTextStateObject;
     $('#list-text-input').on('change input paste', onTextInput);
-
-    // TODO: detach both forms?
 });

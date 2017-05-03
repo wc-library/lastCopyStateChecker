@@ -11,6 +11,14 @@ if(!file_exists(CONFIG_PATH)) {
 }
 
 
+/* Classes */
+
+/**
+ * Exception class to throw if get_library_locations() fails to retrieve locations
+ */
+class LibraryLocationException extends Exception {}
+
+
 /* Functions */
 
 /**
@@ -30,10 +38,11 @@ function fix_oclc($oclc) {
  * @return string Formatted WorldCat Search API URL (includes the API key)
  */
 function format_api_url($oclc) {
-    global $api_key, $abb;
+    $api_key = CONFIG['wskey'];
+    $state = CONFIG['state'];
 
     $base_url = "http://www.worldcat.org/webservices/catalog/content/libraries/$oclc";
-    $get_params = "servicelevel=full&format=json&location=$abb&frbrGrouping=off&maximumLibraries=100&startLibrary=1&wskey=$api_key";
+    $get_params = "servicelevel=full&format=json&location=$state&frbrGrouping=off&maximumLibraries=100&startLibrary=1&wskey=$api_key";
     return "$base_url?$get_params";
 }
 
@@ -42,6 +51,7 @@ function format_api_url($oclc) {
  * Retrieves JSON data for library locations query using curl
  * @param string|int $oclc The OCLC number
  * @return mixed Associative array of libraries or false if query failed
+ * @throws LibraryLocationException
  */
 function get_library_locations($oclc) {
     $url = format_api_url($oclc);
@@ -61,7 +71,16 @@ function get_library_locations($oclc) {
     $library_locations =
         (is_array($results) && array_key_exists('library', $results)) ?
         $results['library'] : false;
-    // TODO: if above is false, get error message
+
+    // If $library_locations is false, pass the error message on in an exception
+    if ($library_locations === false) {
+        // Error message (defaults to case where JSON could not be decoded)
+        $error_message = 'Error: Could not decode response from server';
+        // get message JSON data was decoded but retrieved data was a diagnostic, not library location results
+        if (array_key_exists('diagnostics', $results))
+            $error_message =$results['diagnostics']['diagnostic']['message'];
+        throw new LibraryLocationException($error_message);
+    }
 
     return $library_locations;
 }
@@ -77,7 +96,7 @@ function get_library_locations($oclc) {
  *
  */
 function check_library_locations($library_locations) {
-    global $libraryName;
+    $institution = CONFIG['institution'];
 
     // Initialize results array
     $results = [
@@ -90,7 +109,7 @@ function check_library_locations($library_locations) {
     foreach ($library_locations as $library) {
         // TODO: handle case where $library doesn't have key 'institutionName'?
         // If it's at this library and we haven't marked it as such already
-        if ($library['institutionName'] === $libraryName && !$results['at-library']) {
+        if ($library['institutionName'] === $institution && !$results['at-library']) {
             // Set $results['at-library'] to true and ['url'] to URL for item in institution's local catalog
             $results['at-library'] = true;
             $results['url'] = $library['opacUrl'];

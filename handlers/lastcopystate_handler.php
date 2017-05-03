@@ -28,10 +28,17 @@ try {
         if ($oclc == '')
             continue;
 
-        $library_locations = get_library_locations($oclc);
-        // TODO: do something if $library_locations === false
-        $flag_results = check_library_locations($library_locations);
-        $results[$index] = ['oclc' => $oclc, 'flag' => $flag_results];
+        try {
+            $library_locations = get_library_locations($oclc);
+            $flag_results = check_library_locations($library_locations);
+        } catch (LibraryLocationException $e) {
+            $error_message = $e->getMessage();
+            $flag_results = null;
+            $results[$index]['error'] = $error_message;
+        }
+
+        $results[$index]['oclc'] = $oclc;
+        $results[$index]['flag'] = $flag_results;
     }
 
     $data['results'] = $results;
