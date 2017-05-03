@@ -41,10 +41,21 @@ function getConfig() {
                 showConfigForm(true);
             }
         },
+        error: function (xhr, status, errorMessage) {
+            // Get response text from server
+            var data;
+            try {
+                data = JSON.parse(xhr.responseText);
+            } catch (e) {
+                data = false;
+            }
+            // If data['error'] doesn't exist or response text wasn't valid JSON, display the HTTP status response
+            var messageString = (data && data.hasOwnProperty('error')) ? data['error'] : errorMessage;
+            displayError(messageString);
+        },
         complete: function () {
             showLoader(false);
         }
-        // TODO: error handling
     })
 }
 
@@ -72,10 +83,22 @@ function setConfig(formData) {
             // Ensure that config file was set and set variables accordingly
             getConfig();
         },
+        error: function (xhr, status, errorMessage) {
+            // Get response text from server
+            var data;
+            try {
+                data = JSON.parse(xhr.responseText);
+            } catch (e) {
+                data = false;
+            }
+            // If data['error'] doesn't exist or response text wasn't valid JSON, display the HTTP status response
+            var messageString = (data && data.hasOwnProperty('error')) ? data['error'] : errorMessage;
+            displayError(messageString);
+            disableConfigForm(false);
+        },
         complete: function () {
             showLoader(false);
         }
-        // TODO: error: display message and re-enable config form
     });
 }
 
@@ -85,10 +108,14 @@ function setConfig(formData) {
  * @returns {FormData} FormData object with config values
  */
 function getConfigFormData() {
-    // TODO: throw exception if required fields are blank
     var state = $('#state-select').find(':selected').val();
     var institution = $('#institution-input').val();
     var wskey = $('#wskey-input').val();
+    // Submit button is disabled if required fields are blank, but just in case
+    if(state === '' || institution === '' || wskey ==='') {
+        // Throw error if field(s) are blank
+        throw 'Please fill out all fields.';
+    }
     // Create FormData object with these values
     var formData = new FormData();
     formData.append('state', state);
