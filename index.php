@@ -1,8 +1,3 @@
-<?php
-/**
- * TODO: rename once implemented
- */
-?>
 <!DOCTYPE html>
 <html lang = "en">
 <?php include_once 'templates/header.php' ?>

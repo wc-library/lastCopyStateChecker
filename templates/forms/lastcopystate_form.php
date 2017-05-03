@@ -2,7 +2,6 @@
 /**
  * Markup for main form to upload a list of OCLC numbers
  */
-// TODO: move to different directory? Not technically a template
 ?>
 
 

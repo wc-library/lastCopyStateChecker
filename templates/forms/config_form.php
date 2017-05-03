@@ -2,14 +2,12 @@
 /**
  * Markup for config form
  */
-// TODO: move to different directory? Not technically a template
 // Include constants (for state select form)
 include_once $_SERVER['DOCUMENT_ROOT'] . '/lastCopyStateChecker/config/constants.php';
 ?>
 
     <div class="well hidden" id="config-form-container">
-        <?php // TODO: use Ajax, issues can arise setting action to self ?>
-        <form class="form-vertical" action="index.php" method="post"  role="form" id="config-form">
+        <form class="form-vertical" role="form" id="config-form">
             <div class="form-group">
                 <label for="state-select">State:</label>
                 <select class="form-control" required id="state-select" name="state">
@@ -21,14 +19,15 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/lastCopyStateChecker/config/constants
                 ?>
                 </select>
             </div>
-            <?php // TODO: add placeholders ?>
             <div class="form-group">
                 <label for="institution-input">Institution name:</label>
-                <input class="form-control" type="text" required id="institution-input" name="institution">
+                <input class="form-control" type="text" required
+                       id="institution-input" name="institution" placeholder="Name of the library/institution">
             </div>
             <div class="form-group">
                 <label for="wskey-input">WorldCat API Key:</label>
-                <input class="form-control" type="text" required id="wskey-input" name="wskey">
+                <input class="form-control" type="text" required
+                       id="wskey-input" name="wskey" placeholder="WorldCat API key">
             </div>
             <div class="form-group">
                 <br>

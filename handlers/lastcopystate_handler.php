@@ -15,7 +15,7 @@ try {
     $oclc_list = ($type == 'file') ?
         file($_FILES['oclc-list']['tmp_name']) : explode(',', $_POST['oclc-list']);
 
-    // TODO: determine how to store results and document
+    // Array to store results in
     $results = [];
 
     // Iterate through each number
@@ -31,7 +31,9 @@ try {
         try {
             $library_locations = get_library_locations($oclc);
             $flag_results = check_library_locations($library_locations);
-        } catch (LibraryLocationException $e) {
+        }
+        // Document any LibraryLocationExceptions thrown and continue execution
+        catch (LibraryLocationException $e) {
             $error_message = $e->getMessage();
             $flag_results = null;
             $results[$index]['error'] = $error_message;

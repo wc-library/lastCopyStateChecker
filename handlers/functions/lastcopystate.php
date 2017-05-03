@@ -74,11 +74,9 @@ function get_library_locations($oclc) {
 
     // If $library_locations is false, pass the error message on in an exception
     if ($library_locations === false) {
-        // Error message (defaults to case where JSON could not be decoded)
-        $error_message = 'Error: Could not decode response from server';
-        // get message JSON data was decoded but retrieved data was a diagnostic, not library location results
-        if (array_key_exists('diagnostics', $results))
-            $error_message =$results['diagnostics']['diagnostic']['message'];
+        $error_message = array_key_exists('diagnostics', $results) ?
+            $error_message =$results['diagnostics']['diagnostic']['message'] :
+            'Could not decode response from server';
         throw new LibraryLocationException($error_message);
     }
 
@@ -93,7 +91,7 @@ function get_library_locations($oclc) {
  * ['at-library'] = true if item is at this institution
  * ['in-state'] = true if item is elsewhere in the state
  * ['url'] = the URL for this institution's catalog entry or null if not found
- *
+ * @throws LibraryLocationException
  */
 function check_library_locations($library_locations) {
     $institution = CONFIG['institution'];
@@ -107,7 +105,16 @@ function check_library_locations($library_locations) {
 
     // Iterate through library locations
     foreach ($library_locations as $library) {
-        // TODO: handle case where $library doesn't have key 'institutionName'?
+        // Handle case where $library doesn't have key 'institutionName'
+        // This generally occurs when $library_locations is a single-item array with diagnostic information
+        if (!array_key_exists('institutionName', $library)) {
+            // Get error message or set a generic one if no diagnostic information is provided
+            $error_message = array_key_exists('diagnostic', $library) ?
+                $library['diagnostic']['message'] :
+                'Institution name not found and no diagnostic message provided';
+            throw new LibraryLocationException($error_message);
+        }
+
         // If it's at this library and we haven't marked it as such already
         if ($library['institutionName'] === $institution && !$results['at-library']) {
             // Set $results['at-library'] to true and ['url'] to URL for item in institution's local catalog
