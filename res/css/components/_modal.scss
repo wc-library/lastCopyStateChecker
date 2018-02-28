@@ -1,0 +1,8 @@
+/* Additional styling for modal */
+
+// Move modal lower on the page close to the visual center
+@media (min-width: $screen-sm-min) {
+  .modal-dialog {
+    margin: 150px auto 30px auto;
+  }
+}

@@ -1,0 +1,9 @@
+# IDE workspace
+.idea
+
+# Config files (used to be saved to root directory)
+init.ini
+config/*.ini
+
+# Test files
+test

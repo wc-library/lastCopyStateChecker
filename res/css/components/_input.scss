@@ -1,0 +1,47 @@
+/*
+ * Additional styling for inputs
+ */
+
+// prevent checkbox label text from getting highlighted if rapidly clicking
+div.checkbox {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+/*
+ * Bootstrap file upload input
+ * See https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3
+ */
+
+// The file select button
+input[type="file"].form-control-file {
+  display: none;
+}
+
+// The text field used to display file name
+input[type="text"].form-control-file {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+
+/*
+ * OCLC textarea styling
+ * (Theme textarea didn't look like an input)
+ */
+
+textarea.list-text-area, textarea.form-control.list-text-area {
+  padding: $panel-body-padding;
+  border: none;
+  border-radius: 2px;
+  @include box-shadow(0 1px 4px rgba(0,0,0,.3));
+  background: $panel-bg;
+  // disable textarea resizing
+  resize: none;
+  &:focus {
+    @include box-shadow(0 3px 6px rgba(0,0,0,.3));
+  }
+}
