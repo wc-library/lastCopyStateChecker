@@ -7,3 +7,6 @@ config/*.ini
 
 # Test files
 test
+
+# Mac Finder
+.DS_Store
