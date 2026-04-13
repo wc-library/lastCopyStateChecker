@@ -72,3 +72,121 @@ go build -o lastcopy ./cmd/server
 GOOS=linux GOARCH=amd64 go build -o lastcopy-linux ./cmd/server
 GOOS=windows GOARCH=amd64 go build -o lastcopy.exe ./cmd/server
 ```
+
+## Production Deployment
+
+### Configuration Path
+
+The application stores configuration in `data/config.json` relative to the **working directory** where the binary is executed. To control where configuration is stored, use one of these approaches:
+
+**Option 1: Set working directory (recommended for systemd)**
+```bash
+cd /var/lib/lastcopy && ./lastcopy
+# Config will be written to /var/lib/lastcopy/data/config.json
+```
+
+**Option 2: Use CONFIG_PATH environment variable**
+```bash
+CONFIG_PATH=/etc/lastcopy/config.json ./lastcopy
+# Config will be written to /etc/lastcopy/config.json
+```
+
+### Systemd Service Example
+
+Create `/etc/systemd/system/lastcopy.service`:
+
+```ini
+[Unit]
+Description=Last Copy State Checker
+After=network.target
+
+[Service]
+Type=simple
+User=lastcopy
+Group=lastcopy
+WorkingDirectory=/var/lib/lastcopy
+Environment="CONFIG_PATH=/var/lib/lastcopy/data/config.json"
+Environment="GIN_MODE=release"
+ExecStart=/usr/local/bin/lastcopy
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Setup steps:**
+```bash
+# Create user and directories
+sudo useradd -r -s /bin/false lastcopy
+sudo mkdir -p /var/lib/lastcopy /usr/local/bin
+
+# Install binary
+sudo cp lastcopy /usr/local/bin/lastcopy
+
+# Set permissions
+sudo chown -R lastcopy:lastcopy /var/lib/lastcopy
+sudo chmod 750 /var/lib/lastcopy
+
+# Enable and start service
+sudo systemctl daemon-reload
+sudo systemctl enable lastcopy
+sudo systemctl start lastcopy
+
+# View logs
+sudo journalctl -u lastcopy -f
+```
+
+### File Permissions
+
+- Config file: `0600` (owner read/write only) — contains API key
+- Config directory: `0750` (owner rwx, group rx)
+- Binary: `0755` (standard executable)
+
+### Reverse Proxy (nginx)
+
+If running behind nginx:
+
+```nginx
+server {
+    listen 80;
+    server_name lastcopy.yourlibrary.org;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+### Reverse Proxy (Apache)
+
+If running behind Apache with `mod_proxy` enabled:
+
+```apache
+<VirtualHost *:80>
+    ServerName lastcopy.yourlibrary.org
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8080/
+    ProxyPassReverse / http://localhost:8080/
+
+    ErrorLog ${APACHE_LOG_DIR}/lastcopy-error.log
+    CustomLog ${APACHE_LOG_DIR}/lastcopy-access.log combined
+</VirtualHost>
+```
+
+Enable required modules:
+```bash
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo systemctl restart apache2
+```
+
+### Security Considerations
+
+- Run as non-root user (`lastcopy` user in example above)
+- Keep API key in config file with restricted permissions (0600)
+- Use HTTPS in production (via reverse proxy)
+- Consider firewall rules if binding to non-localhost interface
