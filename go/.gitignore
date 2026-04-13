@@ -1,0 +1,14 @@
+# Binaries
+lastcopy
+lastcopy-*
+*.exe
+
+# Test data and config (contains API keys)
+data/
+
+# Go build artifacts
+*.log
+
+# IDE
+.idea/
+.vscode/
