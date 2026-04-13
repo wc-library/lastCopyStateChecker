@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 { color: #333; }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .required { color: #d32f2f; }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover { background: #1565c0; }
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .success { background: #e8f5e9; color: #2e7d32; }
+        .error { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+    <h1>Initial Setup</h1>
+    <p>Welcome to the Last Copy State Checker. Please configure the application to get started.</p>
+    
+    <form id="setupForm">
+        <div class="form-group">
+            <label for="oclc_api_key">
+                OCLC API Key <span class="required">*</span>
+            </label>
+            <input type="text" id="oclc_api_key" name="oclc_api_key" required>
+            <small>Your WorldCat API key from <a href="https://www.oclc.org/developer/" target="_blank">OCLC Developer</a></small>
+        </div>
+        
+        <div class="form-group">
+            <label for="state">
+                State <span class="required">*</span>
+            </label>
+            <input type="text" id="state" name="state" placeholder="IL" maxlength="2" required>
+            <small>Two-letter state code (e.g., IL, CA, NY)</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="institution">
+                Institution Name <span class="required">*</span>
+            </label>
+            <input type="text" id="institution" name="institution" required>
+            <small>Your library name as it appears in WorldCat</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="port">Port</label>
+            <input type="text" id="port" name="port" placeholder="8080">
+            <small>Server port (default: 8080)</small>
+        </div>
+        
+        <button type="submit">Save Configuration</button>
+    </form>
+    
+    <div id="message" class="message"></div>
+    
+    <script>
+        document.getElementById('setupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/setup', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                
+                const result = await response.json();
+                const msgDiv = document.getElementById('message');
+                
+                if (response.ok) {
+                    msgDiv.className = 'message success';
+                    msgDiv.textContent = result.message;
+                    msgDiv.style.display = 'block';
+                    // Redirect to main app immediately
+                    setTimeout(() => window.location.href = '/', 500);
+                } else {
+                    msgDiv.className = 'message error';
+                    msgDiv.textContent = result.error || 'An error occurred';
+                    msgDiv.style.display = 'block';
+                }
+            } catch (err) {
+                const msgDiv = document.getElementById('message');
+                msgDiv.className = 'message error';
+                msgDiv.textContent = 'Network error: ' + err.message;
+                msgDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
