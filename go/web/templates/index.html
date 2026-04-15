@@ -34,6 +34,35 @@
         input[type="file"] {
             margin: 10px 0;
         }
+
+        /* Drag and Drop Zone */
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            background: #fafafa;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .drop-zone:hover {
+            border-color: #1976d2;
+            background: #f5f5f5;
+        }
+        .drop-zone.drag-over {
+            border-color: #4caf50;
+            background: #f1f8e9;
+        }
+        .drop-zone p {
+            margin: 0;
+        }
+        .drop-zone .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
         button {
             background: #1976d2;
             color: white;
@@ -202,7 +231,11 @@
     <div class="form-group">
         <label for="oclc-input">Enter OCLC Numbers</label>
         <textarea id="oclc-input" rows="10" placeholder="One OCLC number per line, or comma-separated..."></textarea>
-        <p>Or upload a file: <input type="file" id="oclc-file" accept=".txt,.csv"></p>
+        <div class="drop-zone" id="drop-zone">
+            <p><strong>Drag and drop a file here</strong></p>
+            <p class="hint">or click to browse (accepts .txt, .csv, or any text file)</p>
+            <input type="file" id="oclc-file" style="display: none;">
+        </div>
     </div>
     
     <button id="check-btn" onclick="checkNumbers()">Check Last Copies</button>
@@ -405,6 +438,83 @@
             
             debugContent.textContent = JSON.stringify(debugOutput, null, 2);
             debugSection.style.display = 'block';
+        }
+
+        // File upload drag and drop
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('oclc-file');
+        const errorDiv = document.getElementById('error');
+        const oclcInput = document.getElementById('oclc-input');
+
+        // Clear error when textarea is modified
+        oclcInput.addEventListener('input', () => {
+            errorDiv.style.display = 'none';
+        });
+
+        // Click to browse
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) readFile(file);
+        });
+
+        // Drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                readFile(files[0]);
+            }
+        }, false);
+
+        function readFile(file) {
+            // Clear any previous error
+            errorDiv.style.display = 'none';
+            
+            // Accept any text-like file (no extension restriction)
+            if (!file.type.match('text.*') && 
+                !file.name.match(/\.(txt|csv|tsv|lst|log|tab)$/i)) {
+                errorDiv.textContent = 
+                    'File type not recognized. Please use .txt, .csv, or other text files.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('oclc-input').value = e.target.result;
+                dropZone.querySelector('p strong').textContent = `Loaded: ${file.name}`;
+                dropZone.querySelector('.hint').textContent = 
+                    `${file.size.toLocaleString()} bytes - ready to check`;
+            };
+            reader.onerror = () => {
+                errorDiv.textContent = 
+                    'Failed to read file. Please try again.';
+                errorDiv.style.display = 'block';
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
