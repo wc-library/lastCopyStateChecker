@@ -299,13 +299,19 @@ func (c *OCLCClient) GetHoldingsWithRaw(oclcNumber string, state string) (*Holdi
 }
 
 // equalFoldState is a case-insensitive state comparison that handles
-// various state code formats (e.g., "IL" vs "Illinois").
+// various state code formats (e.g., "IL" vs "Illinois", "US-IL" vs "IL").
 func equalFoldState(apiState, configState string) bool {
+	// Strip "US-" prefix from API state if present (API returns "US-IL", config has "IL")
+	cleanAPIState := apiState
+	if len(apiState) > 3 && apiState[0:3] == "US-" {
+		cleanAPIState = apiState[3:]
+	}
+
 	// Normalize both to uppercase for comparison
 	// This handles both 2-letter codes and full state names
-	return len(apiState) >= 2 && len(configState) >= 2 &&
-		(apiState[0:2] == configState[0:2] ||
-			equalFoldFull(apiState, configState))
+	return len(cleanAPIState) >= 2 && len(configState) >= 2 &&
+		(cleanAPIState[0:2] == configState[0:2] ||
+			equalFoldFull(cleanAPIState, configState))
 }
 
 // equalFoldFull does a full case-insensitive string comparison.
