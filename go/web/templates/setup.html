@@ -55,12 +55,42 @@
     <p>Welcome to the Last Copy State Checker. Please configure the application to get started.</p>
     
     <form id="setupForm">
+        <h2>OCLC API Credentials</h2>
+        <p>Request OAuth2 credentials from <a href="https://www.oclc.org/developer/" target="_blank">OCLC Developer Network</a></p>
+        <p><strong>Select M2M (Machine-to-Machine) flow</strong> for server-side API access.</p>
+        
         <div class="form-group">
-            <label for="oclc_api_key">
-                OCLC API Key <span class="required">*</span>
+            <label for="oclc_client_id">
+                OCLC Client ID <span class="required">*</span>
             </label>
-            <input type="text" id="oclc_api_key" name="oclc_api_key" required>
-            <small>Your WorldCat API key from <a href="https://www.oclc.org/developer/" target="_blank">OCLC Developer</a></small>
+            <input type="text" id="oclc_client_id" name="oclc_client_id" required>
+            <small>OAuth2 Client ID from OCLC</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="oclc_client_secret">
+                OCLC Client Secret <span class="required">*</span>
+            </label>
+            <input type="password" id="oclc_client_secret" name="oclc_client_secret" required>
+            <small>OAuth2 Client Secret (keep confidential)</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="oclc_institution_id">
+                OCLC Institution ID <span class="required">*</span>
+            </label>
+            <input type="text" id="oclc_institution_id" name="oclc_institution_id" required>
+            <small>Your OCLC institution symbol (e.g., ILU, CUY)</small>
+        </div>
+        
+        <h2>Library Settings</h2>
+        
+        <div class="form-group">
+            <label for="institution">
+                Institution Name <span class="required">*</span>
+            </label>
+            <input type="text" id="institution" name="institution" required>
+            <small>Your library name as it appears in WorldCat</small>
         </div>
         
         <div class="form-group">
@@ -69,14 +99,6 @@
             </label>
             <input type="text" id="state" name="state" placeholder="IL" maxlength="2" required>
             <small>Two-letter state code (e.g., IL, CA, NY)</small>
-        </div>
-        
-        <div class="form-group">
-            <label for="institution">
-                Institution Name <span class="required">*</span>
-            </label>
-            <input type="text" id="institution" name="institution" required>
-            <small>Your library name as it appears in WorldCat</small>
         </div>
         
         <div class="form-group">

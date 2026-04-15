@@ -10,10 +10,12 @@ import (
 // Config holds all application settings.
 // JSON struct tags define how fields are serialized to JSON.
 type Config struct {
-	OCLCAPIKey  string `json:"oclc_api_key"`   // WorldCat API key
-	State       string `json:"state"`          // Two-letter state code (e.g., "IL")
-	Institution string `json:"institution"`    // Your library name in WorldCat
-	Port        string `json:"port"`           // Server port (default 8080)
+	OCLCClientID      string `json:"oclc_client_id"`      // OAuth2 client ID
+	OCLCClientSecret  string `json:"oclc_client_secret"`  // OAuth2 client secret
+	OCLCInstitutionID string `json:"oclc_institution_id"` // OCLC institution symbol
+	State             string `json:"state"`               // Two-letter state code (e.g., "IL")
+	Institution       string `json:"institution"`         // Your library name in WorldCat
+	Port              string `json:"port"`                // Server port (default 8080)
 }
 
 // DefaultConfigPath returns the default location for the config file.
@@ -44,8 +46,14 @@ func Load(path string) (*Config, error) {
 	}
 
 	// Environment variables override file values (allows container use)
-	if key := os.Getenv("OCLC_API_KEY"); key != "" {
-		cfg.OCLCAPIKey = key
+	if clientID := os.Getenv("OCLC_CLIENT_ID"); clientID != "" {
+		cfg.OCLCClientID = clientID
+	}
+	if clientSecret := os.Getenv("OCLC_CLIENT_SECRET"); clientSecret != "" {
+		cfg.OCLCClientSecret = clientSecret
+	}
+	if instID := os.Getenv("OCLC_INSTITUTION_ID"); instID != "" {
+		cfg.OCLCInstitutionID = instID
 	}
 	if state := os.Getenv("STATE"); state != "" {
 		cfg.State = state
@@ -63,13 +71,23 @@ func Load(path string) (*Config, error) {
 // IsComplete returns true if all required fields are set.
 // This determines whether to show the setup UI or the main app.
 func (c *Config) IsComplete() bool {
-	return c.OCLCAPIKey != "" && c.State != "" && c.Institution != ""
+	return c.OCLCClientID != "" &&
+		c.OCLCClientSecret != "" &&
+		c.OCLCInstitutionID != "" &&
+		c.State != "" &&
+		c.Institution != ""
 }
 
 // Validate returns an error if any required field is missing.
 func (c *Config) Validate() error {
-	if c.OCLCAPIKey == "" {
-		return fmt.Errorf("OCLC API key is required")
+	if c.OCLCClientID == "" {
+		return fmt.Errorf("OCLC Client ID is required")
+	}
+	if c.OCLCClientSecret == "" {
+		return fmt.Errorf("OCLC Client Secret is required")
+	}
+	if c.OCLCInstitutionID == "" {
+		return fmt.Errorf("OCLC Institution ID is required")
 	}
 	if c.State == "" {
 		return fmt.Errorf("state is required")

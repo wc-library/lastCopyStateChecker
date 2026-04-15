@@ -8,9 +8,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/wc-library/lastCopyStateChecker/internal/api"
+	"github.com/wc-library/lastCopyStateChecker/internal/checker"
 	"github.com/wc-library/lastCopyStateChecker/internal/config"
 )
 
@@ -19,6 +22,7 @@ import (
 type App struct {
 	Config     *config.Config
 	ConfigPath string
+	checker    *checker.Checker
 	mu         sync.RWMutex // protects config and isSetup for thread-safe access
 	isSetup    bool         // true if config is complete
 }
@@ -73,6 +77,13 @@ func main() {
 		Config:     cfg,
 		ConfigPath: configPath,
 		isSetup:    cfg.IsComplete(),
+	}
+
+	// Initialize API client and checker if configuration is complete.
+	// These are initialized after loading config so we have the OAuth2 credentials.
+	if app.isSetup {
+		client := api.NewClient(cfg.OCLCClientID, cfg.OCLCClientSecret, cfg.OCLCInstitutionID)
+		app.checker = checker.New(client, cfg.Institution, cfg.State)
 	}
 
 	if app.isSetup {
@@ -157,22 +168,26 @@ func (app *App) handleSetup(c *gin.Context) {
 
 	// c.PostForm retrieves form data from the request body.
 	// Returns empty string if the field is missing.
-	oclcKey := c.PostForm("oclc_api_key")
+	clientID := c.PostForm("oclc_client_id")
+	clientSecret := c.PostForm("oclc_client_secret")
+	institutionID := c.PostForm("oclc_institution_id")
 	state := c.PostForm("state")
 	institution := c.PostForm("institution")
 	port := c.PostForm("port")
 
 	// Validate required fields.
 	// gin.H creates JSON response: {"error": "..."}
-	if oclcKey == "" || state == "" || institution == "" {
+	if clientID == "" || clientSecret == "" || institutionID == "" || state == "" || institution == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "OCLC API key, state, and institution are required",
+			"error": "OCLC Client ID, Client Secret, Institution ID, state, and institution name are required",
 		})
 		return
 	}
 
 	// Update application config.
-	app.Config.OCLCAPIKey = oclcKey
+	app.Config.OCLCClientID = clientID
+	app.Config.OCLCClientSecret = clientSecret
+	app.Config.OCLCInstitutionID = institutionID
 	app.Config.State = state
 	app.Config.Institution = institution
 	if port != "" {
@@ -203,6 +218,10 @@ func (app *App) handleSetup(c *gin.Context) {
 		return
 	}
 
+	// Initialize API client and checker with new configuration
+	client := api.NewClient(app.Config.OCLCClientID, app.Config.OCLCClientSecret, app.Config.OCLCInstitutionID)
+	app.checker = checker.New(client, app.Config.Institution, app.Config.State)
+
 	log.Println("Configuration updated - switching to application mode")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Configuration saved successfully. Redirecting to application...",
@@ -220,8 +239,55 @@ func (app *App) handleCheck(c *gin.Context) {
 		return
 	}
 
-	// Stub implementation - we'll add real logic after building the OCLC client.
+	// Get OCLC numbers from form data
+	oclcList := c.PostForm("oclc-list")
+	if oclcList == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "No OCLC numbers provided",
+		})
+		return
+	}
+
+	// Parse the input - comma-separated or one per line
+	// Split on commas and newlines, then clean up whitespace
+	oclcNumbers := parseOCLCInput(oclcList)
+
+	if len(oclcNumbers) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "No valid OCLC numbers found",
+		})
+		return
+	}
+
+	// Check each OCLC number
+	results := app.checker.CheckMany(oclcNumbers)
+
+	// Filter to only last copy candidates
+	candidates := checker.LastCopyCandidates(results)
+
+	// Return both full results and candidates
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Check endpoint - implementation pending",
+		"results":    results,
+		"candidates": candidates,
+		"total":      len(results),
+		"candidates_count": len(candidates),
 	})
+}
+
+// parseOCLCInput splits a string on commas and newlines to extract OCLC numbers.
+func parseOCLCInput(input string) []string {
+	// Replace commas with newlines so we can split on both uniformly
+	input = strings.ReplaceAll(input, ",", "\n")
+
+	lines := strings.Split(input, "\n")
+	var numbers []string
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed != "" {
+			numbers = append(numbers, trimmed)
+		}
+	}
+
+	return numbers
 }

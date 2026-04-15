@@ -30,22 +30,34 @@ The application can be configured in two ways:
 ### 1. Web Setup (Recommended for first run)
 
 On first start, if no configuration exists, the application will redirect to a setup page where you can enter:
-- OCLC API Key
-- State (two-letter code, e.g., "IL")
-- Institution name (as it appears in WorldCat)
-- Server port (optional, defaults to 8080)
+
+**OCLC API Credentials** (from [OCLC Developer Network](https://www.oclc.org/developer/)):
+- **Client ID** — OAuth2 Client ID (select M2M/Machine-to-Machine flow)
+- **Client Secret** — OAuth2 Client Secret
+- **Institution ID** — Your OCLC institution symbol (e.g., "ILU", "CUY")
+
+**Library Settings**:
+- **Institution Name** — Your library name as it appears in WorldCat
+- **State** — Two-letter state code (e.g., "IL")
+- **Port** — Server port (optional, defaults to 8080)
 
 These values are saved to `data/config.json` with restricted file permissions (0600).
 
 ### 2. Environment Variables
 
 For container deployments or automation, set these environment variables:
-- `OCLC_API_KEY` — Your WorldCat API key
+
+**OCLC API Credentials**:
+- `OCLC_CLIENT_ID` — OAuth2 Client ID
+- `OCLC_CLIENT_SECRET` — OAuth2 Client Secret
+- `OCLC_INSTITUTION_ID` — OCLC institution symbol
+
+**Library Settings**:
 - `STATE` — Two-letter state code
 - `INSTITUTION` — Your library name
 - `PORT` — Server port (default: 8080)
 
-**Priority:** Environment variables override values in the config file. This allows you to store settings in the file while keeping the API key in an environment variable.
+**Priority:** Environment variables override values in the config file. This allows you to keep sensitive credentials in environment variables.
 
 ## Key Go Concepts We'll Use
 
