@@ -4,7 +4,9 @@ package main
 // The main() function is the entry point when you run the program.
 
 import (
+	"embed"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +18,9 @@ import (
 	"github.com/wc-library/lastCopyStateChecker/internal/checker"
 	"github.com/wc-library/lastCopyStateChecker/internal/config"
 )
+
+//go:embed all:web/templates
+var templatesFS embed.FS
 
 // App holds our application state and dependencies.
 // Using a struct allows us to pass the config to handlers cleanly.
@@ -103,11 +108,11 @@ func main() {
 	// Empty string slice means "trust none" - safe default.
 	router.SetTrustedProxies([]string{})
 
-	// Configure template and static file serving.
-	// LoadHTMLGlob: finds all .html files in web/templates/ and parses them.
-	// Static: serves files from web/static/ at the URL path /static/.
-	router.LoadHTMLGlob("web/templates/*")
-	router.Static("/static", "web/static")
+	// Configure template serving.
+	// Templates are embedded in the binary for easy deployment.
+	// Parse templates from embedded filesystem and set on router.
+	templ := template.Must(template.New("").ParseFS(templatesFS, "web/templates/*.html"))
+	router.SetHTMLTemplate(templ)
 
 	// Register all route handlers (both setup and app routes).
 	// Middleware will control access based on configuration state.

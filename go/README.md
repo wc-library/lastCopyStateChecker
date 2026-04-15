@@ -88,12 +88,20 @@ go mod tidy
 # Development (auto-reloads on file change with 'air' or similar)
 go run cmd/server/main.go
 
-# Production build - creates single binary
+# Production build - creates single binary (templates and static files are embedded)
 go build -o lastcopy ./cmd/server
 
 # Cross-compile for different platforms
 GOOS=linux GOARCH=amd64 go build -o lastcopy-linux ./cmd/server
 GOOS=windows GOARCH=amd64 go build -o lastcopy.exe ./cmd/server
+```
+
+**Note**: Templates and static files are embedded in the binary—no separate `web/` directory needed for deployment.
+
+**Runtime Configuration**: Set `GIN_MODE=release` when running in production to disable debug logging:
+```bash
+export GIN_MODE=release
+./lastcopy
 ```
 
 ## Using the Web Interface
@@ -240,3 +248,7 @@ sudo systemctl restart apache2
 - Use HTTPS in production (via reverse proxy)
 - Consider firewall rules if binding to non-localhost interface
 - Debug mode exposes raw API responses—ensure only authorized users can access when enabled
+
+## TODO / Future Improvements
+
+- **Release Build Pipeline**: Implement GitHub Actions workflow to automatically build and publish cross-platform binaries (Linux AMD64/ARM64, Windows, macOS) on tagged releases. This avoids storing compiled binaries in the repository.
