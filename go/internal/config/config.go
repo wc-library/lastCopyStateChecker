@@ -16,6 +16,7 @@ type Config struct {
 	State             string `json:"state"`               // Two-letter state code (e.g., "IL")
 	Institution       string `json:"institution"`         // Your library name in WorldCat
 	Port              string `json:"port"`                // Server port (default 8080)
+	Debug             bool   `json:"debug"`               // Enable debug mode to show raw API responses
 }
 
 // DefaultConfigPath returns the default location for the config file.

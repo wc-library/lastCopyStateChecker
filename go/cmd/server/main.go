@@ -83,7 +83,7 @@ func main() {
 	// These are initialized after loading config so we have the OAuth2 credentials.
 	if app.isSetup {
 		client := api.NewClient(cfg.OCLCClientID, cfg.OCLCClientSecret, cfg.OCLCInstitutionID)
-		app.checker = checker.New(client, cfg.Institution, cfg.State)
+		app.checker = checker.New(client, cfg.Institution, cfg.State, cfg.Debug)
 	}
 
 	if app.isSetup {
@@ -220,7 +220,7 @@ func (app *App) handleSetup(c *gin.Context) {
 
 	// Initialize API client and checker with new configuration
 	client := api.NewClient(app.Config.OCLCClientID, app.Config.OCLCClientSecret, app.Config.OCLCInstitutionID)
-	app.checker = checker.New(client, app.Config.Institution, app.Config.State)
+	app.checker = checker.New(client, app.Config.Institution, app.Config.State, app.Config.Debug)
 
 	log.Println("Configuration updated - switching to application mode")
 	c.JSON(http.StatusOK, gin.H{

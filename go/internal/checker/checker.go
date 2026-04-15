@@ -19,8 +19,8 @@ type Result struct {
 	CatalogURL string `json:"catalog_url,omitempty"`
 	// Error message if the check failed
 	Error string `json:"error,omitempty"`
-	// Debug info
-	Debug DebugInfo `json:"debug,omitempty"`
+	// Debug info (only present when debug mode is enabled)
+	Debug *DebugInfo `json:"debug,omitempty"`
 }
 
 // DebugInfo contains diagnostic information.
@@ -41,14 +41,16 @@ type Checker struct {
 	client      api.Client
 	institution string
 	state       string
+	debug       bool
 }
 
 // New creates a new Checker with the given API client and configuration.
-func New(client api.Client, institution, state string) *Checker {
+func New(client api.Client, institution, state string, debug bool) *Checker {
 	return &Checker{
 		client:      client,
 		institution: institution,
 		state:       strings.ToUpper(state), // Normalize state to uppercase
+		debug:       debug,
 	}
 }
 
@@ -66,9 +68,6 @@ func (c *Checker) CheckOCLC(oclcNumber string) *Result {
 
 	result := &Result{
 		OCLCNumber: cleanOCLC,
-		Debug: DebugInfo{
-			StateRequested: c.state,
-		},
 	}
 
 	// Single API call that returns both holdings and raw response
@@ -78,9 +77,14 @@ func (c *Checker) CheckOCLC(oclcNumber string) *Result {
 		return result
 	}
 
-	// Store raw response for debugging
-	result.Debug.RawResponse = holdingsResult.RawResponse
-	result.Debug.LibrariesFound = len(holdingsResult.Libraries)
+	// Store debug info only if debug mode is enabled
+	if c.debug {
+		result.Debug = &DebugInfo{
+			StateRequested: c.state,
+			LibrariesFound: len(holdingsResult.Libraries),
+			RawResponse:    holdingsResult.RawResponse,
+		}
+	}
 
 	// Analyze the holdings
 	c.analyzeHoldings(holdingsResult.Libraries, result)
