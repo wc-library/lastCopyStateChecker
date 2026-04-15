@@ -132,15 +132,19 @@ func main() {
 
 // registerRoutes sets up all URL routes.
 // Routes check configuration state internally and route to appropriate handler.
+// If BasePath is configured (e.g., "/lastcopy"), all routes are prefixed with it.
 func (app *App) registerRoutes(r *gin.Engine) {
+	// Get base path from config (e.g., "/lastcopy" or "")
+	base := strings.TrimSuffix(app.Config.BasePath, "/")
+
 	// Root path - serves setup or main app based on configuration state
-	r.GET("/", app.handleRoot)
+	r.GET(base+"/", app.handleRoot)
 
 	// Setup submission - only valid during setup mode
-	r.POST("/setup", app.handleSetup)
+	r.POST(base+"/setup", app.handleSetup)
 
 	// Check endpoint - only valid when configured
-	r.POST("/check", app.handleCheck)
+	r.POST(base+"/check", app.handleCheck)
 }
 
 // handleRoot serves either the setup page or the main app depending on config state.
@@ -151,6 +155,7 @@ func (app *App) handleRoot(c *gin.Context) {
 			"Title":       "Last Copy State Checker",
 			"Institution": app.Config.Institution,
 			"State":       app.Config.State,
+			"BasePath":    app.Config.BasePath,
 		})
 	} else {
 		// Config incomplete - show setup page

@@ -16,6 +16,7 @@ type Config struct {
 	State             string `json:"state"`               // Two-letter state code (e.g., "IL")
 	Institution       string `json:"institution"`         // Your library name in WorldCat
 	Port              string `json:"port"`                // Server port (default 8080)
+	BasePath          string `json:"base_path"`           // URL base path if running in subdirectory (e.g., "/lastcopy")
 	Debug             bool   `json:"debug"`               // Enable debug mode to show raw API responses
 }
 

@@ -107,6 +107,12 @@
             <small>Server port (default: 8080)</small>
         </div>
         
+        <div class="form-group">
+            <label for="base_path">Base Path</label>
+            <input type="text" id="base_path" name="base_path" placeholder="/lastcopy">
+            <small>URL path if running in subdirectory (e.g., /lastcopy). Leave blank for root.</small>
+        </div>
+        
         <button type="submit">Save Configuration</button>
     </form>
     
@@ -118,8 +124,12 @@
             
             const formData = new FormData(e.target);
             
+            // Get base_path from form to construct correct URL
+            const basePath = formData.get('base_path') || '';
+            const setupUrl = basePath ? basePath.replace(/\/$/, '') + '/setup' : '/setup';
+            
             try {
-                const response = await fetch('/setup', {
+                const response = await fetch(setupUrl, {
                     method: 'POST',
                     body: new URLSearchParams(formData)
                 });
@@ -131,8 +141,9 @@
                     msgDiv.className = 'message success';
                     msgDiv.textContent = result.message;
                     msgDiv.style.display = 'block';
-                    // Redirect to main app immediately
-                    setTimeout(() => window.location.href = '/', 500);
+                    // Redirect to main app immediately (using base path)
+                    const homeUrl = basePath ? basePath.replace(/\/$/, '') + '/' : '/';
+                    setTimeout(() => window.location.href = homeUrl, 500);
                 } else {
                     msgDiv.className = 'message error';
                     msgDiv.textContent = result.error || 'An error occurred';

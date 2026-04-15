@@ -295,6 +295,9 @@
     </div>
     
     <script>
+        // Base path from server config (for subdirectory deployments)
+        const basePath = '{{ .BasePath }}' || '';
+        
         let lastResults = null;
         let lastCandidates = [];
         
@@ -316,8 +319,11 @@
             error.style.display = 'none';
             results.classList.remove('show');
             
+            // Construct check URL with base path
+            const checkUrl = basePath ? basePath.replace(/\/$/, '') + '/check' : '/check';
+            
             try {
-                const response = await fetch('/check', {
+                const response = await fetch(checkUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({ 'oclc-list': input })
