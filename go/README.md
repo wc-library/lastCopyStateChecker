@@ -1,5 +1,9 @@
 # Last Copy State Checker - Go Version
 
+## Overview
+
+This is a Go implementation of the Last Copy State Checker application. It provides a web interface for checking OCLC numbers against the WorldCat API to identify items held only by your institution in your state.
+
 ## Project Structure
 
 ```
@@ -40,8 +44,23 @@ On first start, if no configuration exists, the application will redirect to a s
 - **Institution Name** — Your library name as it appears in WorldCat
 - **State** — Two-letter state code (e.g., "IL")
 - **Port** — Server port (optional, defaults to 8080)
+- **Debug** — Enable debug mode to see raw API responses (optional, default: false)
 
 These values are saved to `data/config.json` with restricted file permissions (0600).
+
+### Example `config.json`
+
+```json
+{
+  "oclc_client_id": "your-client-id",
+  "oclc_client_secret": "your-client-secret",
+  "oclc_institution_id": "ILU",
+  "state": "IL",
+  "institution": "Your Library Name",
+  "port": "8080",
+  "debug": false
+}
+```
 
 ### 2. Environment Variables
 
@@ -56,17 +75,9 @@ For container deployments or automation, set these environment variables:
 - `STATE` — Two-letter state code
 - `INSTITUTION` — Your library name
 - `PORT` — Server port (default: 8080)
+- `DEBUG` — Set to `true` to enable debug mode
 
 **Priority:** Environment variables override values in the config file. This allows you to keep sensitive credentials in environment variables.
-
-## Key Go Concepts We'll Use
-
-1. **Packages**: Every `.go` file starts with `package xyz`. `main` is special—it's the executable.
-2. **Modules**: `go.mod` defines your module path and dependencies.
-3. **Interfaces**: Define behavior, then implement. Great for testing.
-4. **Structs**: Your data types with typed fields.
-5. **Methods**: Functions attached to types (e.g., `cfg.Save()`).
-6. **Error wrapping**: `%w` verb in `fmt.Errorf()` preserves error chains for debugging.
 
 ## Building
 
@@ -84,6 +95,32 @@ go build -o lastcopy ./cmd/server
 GOOS=linux GOARCH=amd64 go build -o lastcopy-linux ./cmd/server
 GOOS=windows GOARCH=amd64 go build -o lastcopy.exe ./cmd/server
 ```
+
+## Using the Web Interface
+
+### Input Methods
+
+1. **Text Entry**: Paste OCLC numbers (one per line or comma-separated) into the textarea
+2. **File Upload**: Drag and drop a file onto the upload zone, or click to browse
+   - Accepts `.txt`, `.csv`, `.tsv`, `.lst`, or any text file
+   - File contents are loaded into the textarea for review before checking
+
+### Results Display
+
+- **Summary Cards**: Shows total checked, last copy candidates, and errors at a glance
+- **Results Table**: Color-coded rows showing:
+  - OCLC Number
+  - Whether item is at your library
+  - Whether other libraries in your state hold it
+  - Status (Last Copy Candidate, At Library, or Not Found)
+- **Download**: Button appears when candidates are found—downloads a `.txt` file with OCLC numbers
+
+### Debug Mode
+
+Enable debug mode by setting `"debug": true` in `config.json` or `DEBUG=true` environment variable. This adds a collapsible "Debug" section to results showing:
+- State filter requested
+- Number of libraries found in API response
+- Raw JSON response from OCLC API
 
 ## Production Deployment
 
@@ -202,3 +239,4 @@ sudo systemctl restart apache2
 - Keep API key in config file with restricted permissions (0600)
 - Use HTTPS in production (via reverse proxy)
 - Consider firewall rules if binding to non-localhost interface
+- Debug mode exposes raw API responses—ensure only authorized users can access when enabled
