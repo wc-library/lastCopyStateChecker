@@ -1,12 +1,22 @@
 # IDE workspace
 .idea
+.vscode
 
-# Config files (used to be saved to root directory)
-init.ini
-config/*.ini
+# Go binaries
+lastcopy
+lastcopy-*
+*.exe
 
-# Test files
-test
+# Data directory (contains sensitive config.json)
+data/
 
 # Mac Finder
 .DS_Store
+
+# Test files
+test
+*.test
+
+# Build artifacts
+dist/
+build/
