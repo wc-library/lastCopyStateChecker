@@ -78,10 +78,16 @@ func main() {
 	}
 
 	// Create application state.
+	// Handle nil config safely
+	var isSetup bool
+	if cfg != nil {
+		isSetup = cfg.IsComplete()
+	}
+
 	app := &App{
 		Config:     cfg,
 		ConfigPath: configPath,
-		isSetup:    cfg.IsComplete(),
+		isSetup:    isSetup,
 	}
 
 	// Initialize API client and checker if configuration is complete.
@@ -132,30 +138,33 @@ func main() {
 
 // registerRoutes sets up all URL routes.
 // Routes check configuration state internally and route to appropriate handler.
-// If BasePath is configured (e.g., "/lastcopy"), all routes are prefixed with it.
+// Routes are always at root - Apache proxy handles the base path prefix.
 func (app *App) registerRoutes(r *gin.Engine) {
-	// Get base path from config (e.g., "/lastcopy" or "")
-	base := strings.TrimSuffix(app.Config.BasePath, "/")
-
 	// Root path - serves setup or main app based on configuration state
-	r.GET(base+"/", app.handleRoot)
+	r.GET("/", app.handleRoot)
 
 	// Setup submission - only valid during setup mode
-	r.POST(base+"/setup", app.handleSetup)
+	r.POST("/setup", app.handleSetup)
 
 	// Check endpoint - only valid when configured
-	r.POST(base+"/check", app.handleCheck)
+	r.POST("/check", app.handleCheck)
 }
 
 // handleRoot serves either the setup page or the main app depending on config state.
 func (app *App) handleRoot(c *gin.Context) {
 	if app.isConfigured() {
 		// Config complete - show main application
+		// Safe access to config fields
+		var institution, state string
+		if app.Config != nil {
+			institution = app.Config.Institution
+			state = app.Config.State
+		}
+
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"Title":       "Last Copy State Checker",
-			"Institution": app.Config.Institution,
-			"State":       app.Config.State,
-			"BasePath":    app.Config.BasePath,
+			"Institution": institution,
+			"State":       state,
 		})
 	} else {
 		// Config incomplete - show setup page
@@ -277,9 +286,9 @@ func (app *App) handleCheck(c *gin.Context) {
 
 	// Return both full results and candidates
 	c.JSON(http.StatusOK, gin.H{
-		"results":    results,
-		"candidates": candidates,
-		"total":      len(results),
+		"results":          results,
+		"candidates":       candidates,
+		"total":            len(results),
 		"candidates_count": len(candidates),
 	})
 }

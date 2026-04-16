@@ -4,5 +4,6 @@
     "oclc_institution_id": "YOUR_INSTITUTION_SYMBOL",
     "state": "IL",
     "institution": "Your Library Name",
-    "port": "8080"
+    "port": "8080",
+    "debug": false
 }
