@@ -10,7 +10,10 @@ This is a Go implementation of the Last Copy State Checker application. It provi
 .
 ├── cmd/
 │   └── server/
-│       └── main.go          # Application entry point (the HTTP server)
+│       ├── main.go          # Application entry point (the HTTP server)
+│       └── web/
+│           ├── static/      # CSS, JS assets (embedded in binary)
+│           └── templates/   # HTML templates (embedded in binary)
 ├── internal/
 │   ├── api/
 │   │   └── oclc.go          # WorldCat API client
@@ -18,9 +21,6 @@ This is a Go implementation of the Last Copy State Checker application. It provi
 │   │   └── config.go        # Configuration loading/saving
 │   └── checker/
 │       └── checker.go       # Core business logic
-├── web/
-│   ├── static/              # CSS, JS assets
-│   └── templates/           # HTML templates
 ├── data/                    # Created on first run - stores config.json
 ├── go.mod                   # Module definition (dependencies)
 ├── go.sum                   # Dependency checksums
@@ -249,6 +249,9 @@ sudo systemctl restart apache2
 - Consider firewall rules if binding to non-localhost interface
 - Debug mode exposes raw API responses—ensure only authorized users can access when enabled
 
-## TODO / Future Improvements
+## Needed Improvements
+- Add button to download error list as CSV
+- Add graceful error handling for API rate limits
+- Add pagination for large result sets
+- 
 
-- **Release Build Pipeline**: Implement GitHub Actions workflow to automatically build and publish cross-platform binaries (Linux AMD64/ARM64, Windows, macOS) on tagged releases. This avoids storing compiled binaries in the repository.
